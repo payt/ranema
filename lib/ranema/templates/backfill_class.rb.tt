@@ -1,0 +1,68 @@
+# frozen_string_literal: true
+
+class <%= class_name %>
+  class << self
+    delegate :call, to: :new
+
+    def durations
+      @durations ||= Array.new(5) { 100 }
+    end
+  end
+
+  ActiveSupport::Notifications.subscribe("sql.active_record") do |*args|
+    event = ActiveSupport::Notifications::Event.new(*args)
+    durations.push(event.duration).shift if event.payload[:name] == "rename.<%= new_column_name %>"
+  end
+
+  # @param page_start [Integer] the page from which to start the backfill process.
+  def call(page_start = nil)
+    ((page_start || pages_count)..0).step(-1).each do |page|
+      <%= model %>.connection.exec_query(
+        update_query,
+        "rename.<%= new_column_name %>",
+        [[nil, page]]
+      )
+
+      sleep(average_duration * 3)
+    end
+  end
+
+  private
+
+  # @return [Hash] Information required to calculate the page_size and pages_count.
+  def page_info
+    @page_info ||= <%= model %>.connection.exec_query(
+      "SELECT pg_relation_size('<%= model.table_name %>'), current_setting('block_size')::int AS block_size"
+    ).to_a.first
+  end
+
+  # @return [Integer] The maximum number of records on a page.
+  def page_size
+    page_info["block_size"] / 4
+  end
+
+  # @return [Integer] The total number of pages in the table.
+  def pages_count
+    @pages_count ||= page_info["pg_relation_size"] / page_info["block_size"]
+  end
+
+  # @return [String] The query to update all records of a single page.
+  def update_query
+    @update_query ||= <<~SQL
+      UPDATE "<%= model.table_name %>"
+      SET "<%= new_column_name %>" = "<%= old_column_name %>"
+      WHERE "<%= old_column_name %>" IS NOT NULL
+      AND ("<%= new_column_name %>" IS NULL OR "<%= new_column_name %>" <> "<%= old_column_name %>")
+      AND ctid = ANY (ARRAY
+        (SELECT ('(' || $1 || ',' || s.i || ')')::tid
+          FROM generate_series(0, #{page_size}) AS s(i)
+        )
+      );
+    SQL
+  end
+
+  # @return [Float] Average query duration in seconds.
+  def average_duration
+    self.class.durations.sum(0.0) / self.class.durations.size / 1000
+  end
+end

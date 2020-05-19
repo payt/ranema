@@ -1,0 +1,5 @@
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    change_column_default :<%= table_name %>, :<%= new_column_name %>, from: nil, to: <%= old_column.default %>
+  end
+end
