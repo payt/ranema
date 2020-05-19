@@ -126,7 +126,7 @@ module Ranema
     def steps
       STEPS.map do |actions|
         actions.map do |action|
-          "Rename::Actions::#{action.to_s.camelcase}".constantize.new(table_name, old_column_name, new_column_name)
+          "Ranema::Actions::#{action.to_s.camelcase}".constantize.new(table_name, old_column_name, new_column_name)
         end
       end
     end

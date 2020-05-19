@@ -5,7 +5,7 @@ require "ranema/utils"
 module Ranema
   module Actions
     class Base
-      include Rename::Utils
+      include Utils
 
       attr_reader :table_name, :old_column_name, :new_column_name
 

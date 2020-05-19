@@ -53,9 +53,10 @@ module Ranema
     end
 
     def render_template(name, options)
-      ERB
-        .new(TEMPLATES_DIR.join("#{name}.rb.tt").binread, trim_mode: "-")
-        .result_with_hash(options)
+      file = TEMPLATES_DIR.join("#{name}.rb.tt")
+      file = file.exist? ? file : Pathname.new("#{Ranema::ROOT_DIR}/ranema/templates/#{name}.rb.tt")
+
+      ERB.new(file.binread, trim_mode: "-").result_with_hash(options)
     end
 
     # @return []
