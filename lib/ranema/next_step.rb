@@ -87,6 +87,10 @@ module Ranema
     # @param name_name [String, Symbol]
     # @param start_step [String, Integer]
     def initialize(table_name: nil, old_column_name: nil, new_column_name: nil, start_step: nil)
+      if todo_item && todo_item.fetch(:new_column_name) != new_column_name
+        raise ArgumentError, "A rename of `old_column_name` is already in progress."
+      end
+
       if table_name && old_column_name && new_column_name
         @table_name = table_name.to_s
         @old_column_name = old_column_name.to_s
