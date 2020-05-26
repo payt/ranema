@@ -87,23 +87,22 @@ module Ranema
     # @param name_name [String, Symbol]
     # @param start_step [String, Integer]
     def initialize(table_name: nil, old_column_name: nil, new_column_name: nil, start_step: nil)
+      @table_name = table_name&.to_s
+      @old_column_name = old_column_name&.to_s
+      @new_column_name = new_column_name&.to_s
+      @start_step = start_step&.to_i || todo_item&.fetch(:next_step, 1) || 1
+
       if todo_item && todo_item.fetch(:new_column_name) != new_column_name
         raise ArgumentError, "A rename of `old_column_name` is already in progress."
       end
-
-      if table_name && old_column_name && new_column_name
-        @table_name = table_name.to_s
-        @old_column_name = old_column_name.to_s
-        @new_column_name = new_column_name.to_s
-        @start_step = start_step&.to_i || todo_item&.fetch(:next_step, 1) || 1
-      elsif todo_item_furthest
-        @table_name = todo_item_furthest.fetch(:table_name)
-        @old_column_name = todo_item_furthest.fetch(:old_column_name)
-        @new_column_name = todo_item_furthest.fetch(:new_column_name)
-        @start_step = todo_item_furthest.fetch(:next_step)
-      else
+      if table_name.nil? && todo_item_furthest.nil?
         raise ArgumentError, "Provide a table_name, old_column_name and new_column_name"
       end
+
+      @table_name = todo_item_furthest.fetch(:table_name)
+      @old_column_name = todo_item_furthest.fetch(:old_column_name)
+      @new_column_name = todo_item_furthest.fetch(:new_column_name)
+      @start_step = todo_item_furthest.fetch(:next_step)
     end
 
     def call
