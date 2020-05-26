@@ -92,17 +92,8 @@ module Ranema
       @new_column_name = new_column_name&.to_s
       @start_step = start_step&.to_i || todo_item&.fetch(:next_step, 1) || 1
 
-      if todo_item && todo_item.fetch(:new_column_name) != new_column_name
-        raise ArgumentError, "A rename of `old_column_name` is already in progress."
-      end
-      if table_name.nil? && todo_item_furthest.nil?
-        raise ArgumentError, "Provide a table_name, old_column_name and new_column_name"
-      end
-
-      @table_name = todo_item_furthest.fetch(:table_name)
-      @old_column_name = todo_item_furthest.fetch(:old_column_name)
-      @new_column_name = todo_item_furthest.fetch(:new_column_name)
-      @start_step = todo_item_furthest.fetch(:next_step)
+      validate_input
+      use_furthest_todo_item if table_name.nil?
     end
 
     def call
@@ -125,6 +116,23 @@ module Ranema
     end
 
     private
+
+    def validate_input
+      if todo_item && todo_item.fetch(:new_column_name) != new_column_name
+        raise ArgumentError, "A rename of `old_column_name` is already in progress."
+      end
+
+      if table_name.nil? && todo_item_furthest.nil?
+        raise ArgumentError, "Provide a table_name, old_column_name and new_column_name"
+      end
+    end
+
+    def use_furthest_todo_item
+      @table_name = todo_item_furthest.fetch(:table_name)
+      @old_column_name = todo_item_furthest.fetch(:old_column_name)
+      @new_column_name = todo_item_furthest.fetch(:new_column_name)
+      @start_step = todo_item_furthest.fetch(:next_step)
+    end
 
     def steps
       STEPS.map do |actions|
