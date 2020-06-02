@@ -26,7 +26,7 @@ module Ranema
           "backfill_migration",
           migration_class_name: migration_class_name,
           backfill_class_name: backfill_class_name,
-          backfill_class_location: "#{RENAMES_DIR}/#{backfill_class_name.snakecase}"
+          backfill_class_location: "db/ranema/#{backfill_class_name.snakecase}" # TODO: make dynamic
         )
       end
 
