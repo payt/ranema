@@ -6,10 +6,10 @@ require "rails"
 
 module Ranema
   module Utils
-    TEMPLATES_DIR = Rails.root.join("lib", "rename", "templates")
+    TEMPLATES_DIR = Rails.root.join("lib", "templates", "ranema")
     MIGRATIONS_DIR = Rails.root.join("db", "migrate")
     JOB_DIR = Rails.root.join("app", "jobs")
-    RENAMES_DIR = Rails.root.join("app", "renames").tap { |path| path.exist? || path.mkdir }
+    RENAMES_DIR = Rails.root.join("db", "ranema").tap { |path| path.exist? || path.mkdir }
 
     # Returns a list of models that use the given table.
     # It removes any sti submodels to reduce the number of changes that are needed.
