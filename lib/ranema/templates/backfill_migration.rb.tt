@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "<%= backfill_class_location %>"
+require Rails.root.join("<%= backfill_class_location %>")
 
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up

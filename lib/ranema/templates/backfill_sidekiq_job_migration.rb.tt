@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "<%= sidekiq_job_location %>"
+require Rails.root.join("<%= sidekiq_job_location %>")
 
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up
