@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class <%= class_name %>
+  DURATIONS_SIZE = 10
+
   class << self
     delegate :call, to: :new
 
     def durations
-      @durations ||= Array.new(5) { 100 }
+      @durations ||= Array.new(DURATIONS_SIZE) { 100 }
     end
   end
 
@@ -17,6 +19,8 @@ class <%= class_name %>
   # @param page_start [Integer] the page from which to start the backfill process.
   def call(page_start = nil)
     ((page_start || pages_count)..0).step(-1).each do |page|
+      puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * 4)}"
+
       <%= model %>.connection.exec_query(
         update_query,
         "rename.<%= new_column_name %>",
@@ -63,6 +67,16 @@ class <%= class_name %>
 
   # @return [Float] Average query duration in seconds.
   def average_duration
-    self.class.durations.sum(0.0) / self.class.durations.size / 1000
+    self.class.durations.sum(0.0) / DURATIONS_SIZE / 1000
+  end
+
+  # @param duration [Float] the duration in seconds.
+  # @return [String] the duration formatted as HH:MM:SS
+  def duration_formatted(duration)
+    hours = (duration / 3600).floor
+    minutes = ((duration % 3600) / 60).floor
+    seconds = (duration % 60).ceil
+
+    "#{hours}:#{minutes.to_s.rjust(2, '0')}:#{seconds.to_s.rjust(2, '0')}"
   end
 end
