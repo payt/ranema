@@ -25,7 +25,8 @@ module Ranema
         render_template(
           "backfill_migration",
           migration_class_name: migration_class_name,
-          backfill_class_name: backfill_class_name
+          backfill_class_name: backfill_class_name,
+          backfill_class_location: "#{RENAMES_DIR}/#{backfill_class_name.snakecase}"
         )
       end
 

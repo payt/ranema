@@ -25,7 +25,8 @@ module Ranema
         render_template(
           "backfill_sidekiq_job_migration",
           migration_class_name: migration_class_name,
-          sidekiq_job_class_name: sidekiq_job_class_name
+          sidekiq_job_class_name: sidekiq_job_class_name,
+          sidekiq_job_location: "#{JOBS_DIR}/#{sidekiq_job_class_name.snakecase}"
         )
       end
 
