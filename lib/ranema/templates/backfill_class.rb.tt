@@ -17,8 +17,8 @@ class <%= class_name %>
   end
 
   # @param page_start [Integer] the page from which to start the backfill process.
-  def call(page_start = nil)
-    ((page_start || pages_count)..0).step(-1).each do |page|
+  def call(page_start = pages_count)
+    (page_start..0).step(-1).each do |page|
       puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * 4)}"
 
       <%= model %>.connection.exec_query(
