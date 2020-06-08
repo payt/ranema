@@ -2,6 +2,7 @@
 
 class <%= class_name %>
   DURATIONS_SIZE = 10
+  SLEEP_FACTOR = 3
 
   class << self
     delegate :call, to: :new
@@ -19,15 +20,16 @@ class <%= class_name %>
   # @param page_start [Integer] the page from which to start the backfill process.
   def call(page_start = pages_count)
     (page_start..0).step(-1).each do |page|
-      puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * 4)}"
+      puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * (SLEEP_FACTOR + 1))}"
 
       <%= model %>.connection.exec_query(
         update_query,
         "rename.<%= new_column_name %>",
-        [[nil, page]]
+        [[nil, page]],
+        prepare: page_start == pages_count
       )
 
-      sleep(average_duration * 3)
+      sleep(average_duration * SLEEP_FACTOR)
     end
   end
 
@@ -67,7 +69,7 @@ class <%= class_name %>
 
   # @return [Float] Average query duration in seconds.
   def average_duration
-    self.class.durations.sum(0.0) / DURATIONS_SIZE / 1000
+    self.class.durations.sum.fdiv(DURATIONS_SIZE * 1000)
   end
 
   # @param duration [Float] the duration in seconds.
