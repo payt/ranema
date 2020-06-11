@@ -35,42 +35,60 @@ module Ranema
   class NextStep
     STEPS = [
       [
+        # Prepares the safe adding of the new column to the database.
         :ignore_new_column
       ],
       [
+        # Adds the new column to the database.
         :add_new_column,
+
+        # Makes sure that from now one the columns of new records are in sync.
         :copy_from_old_to_new_column_trigger,
+
+        # Makes sure that all existing records are updated.
         :add_backfill_class,
         :add_backfill_migration,
         # :add_backfill_background_job,
         # :add_backfill_background_job_migration
       ],
       [
+        # Checks if the added trigger and backfill have done their jobs.
         :add_sanity_check_constraint,
-        :copy_from_new_to_old_column_trigger,
+
+        # Copies all database settings from the old to the new column.
         :copy_indexes,
         :copy_foreign_keys,
         :copy_triggers,
         :copy_default_value,
         :copy_checks,
         :copy_null_constraint,
-        # :copy_unique_constraint,
-        :unignore_new_column
+        # TODO :copy_unique_constraint,
       ],
       [
+        # Allows the usage of the new attribute.
+        :unignore_new_column,
+
+        # Replaces (most?) occurrences of the old column/attribute with the new one.
         :replace_in_models,
         :replace_in_queries,
         :replace_in_orm_queries,
         :replace_method_calls,
         :replace_in_named_files,
+
+        # Adds deprecation warnings while allowing the safe usage of the old column/attribute.
+        :copy_from_new_to_old_column_trigger,
         :add_deprecation_warning_rails,
         :add_deprecation_warning_postgresql
       ],
       [
+        # Prepares the safe removal of the old column from the database.
         :ignore_old_column
       ],
       [
+        # Removes the old column from the database, point of no return
         :remove_old_column,
+
+        # Cleanup the codebase.
         :remove_deprecation_warning_rails,
         :unignore_old_column
       ]
