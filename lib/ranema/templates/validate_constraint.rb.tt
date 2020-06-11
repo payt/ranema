@@ -3,11 +3,11 @@
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up
     safety_assured do
-      execute(<<~SQL)
+      exec_query(<<~SQL)
         ALTER TABLE
           <%= table_name %>
         VALIDATE CONSTRAINT
-          <%= constraint_name %>
+          <%= constraint_name %>;
       SQL
     end
   end

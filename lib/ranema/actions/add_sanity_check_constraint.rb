@@ -19,6 +19,7 @@ module Ranema
 
       def perform
         add_check(table_name, check, check_name)
+        validate_constraint(table_name, check_name)
       end
 
       def performed?

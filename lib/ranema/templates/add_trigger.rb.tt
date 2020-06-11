@@ -10,7 +10,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
   end
 
   def down
-    execute(<<~SQL)
+    exec_query(<<~SQL)
       DROP FUNCTION IF EXISTS <%= function_name %> CASCADE;
     SQL
   end

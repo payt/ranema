@@ -3,12 +3,12 @@
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up
     safety_assured do
-      execute(<<~SQL)
+      exec_query(<<~SQL)
         ALTER TABLE
           <%= table_name %>
         DROP COLUMN
           <%= old_column_name %>
-        CASCADE
+        CASCADE;
       SQL
     end
   end
