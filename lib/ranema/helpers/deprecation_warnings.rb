@@ -45,7 +45,7 @@ module Ranema
       end
 
       def warned?
-        file.match?(/def #{old_column_name}\s+ActiveSupport::Deprecation\.warn/)
+        file.match?(/^\s*def #{old_column_name}\s+ActiveSupport::Deprecation/m)
       end
 
       private
@@ -71,7 +71,7 @@ module Ranema
       def insert_reader
         file.insert(insert_index, <<~RUBY)
           #{method_indentation}def #{old_column_name}
-          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}` instead of `#{model}##{old_column_name}`#{quote})
+          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}` instead)
           #{method_indentation}#{indentation}#{new_column_name}
           #{method_indentation}end
 
@@ -81,7 +81,7 @@ module Ranema
       def insert_writer
         file.insert(insert_index, <<~RUBY)
           #{method_indentation}def #{old_column_name}=(*args)
-          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}=` instead of `#{model}##{old_column_name}=`#{quote})
+          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}=` instead)
           #{method_indentation}#{indentation}super
           #{method_indentation}end
 

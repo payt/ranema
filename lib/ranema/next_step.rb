@@ -21,6 +21,7 @@ require "ranema/actions/copy_null_constraint"
 require "ranema/actions/copy_triggers"
 require "ranema/actions/ignore_new_column"
 require "ranema/actions/ignore_old_column"
+require "ranema/actions/prepend_missing_table_names"
 require "ranema/actions/remove_deprecation_warning_rails"
 require "ranema/actions/remove_old_column"
 require "ranema/actions/replace_in_models"
@@ -36,7 +37,8 @@ module Ranema
     STEPS = [
       [
         # Prepares the safe adding of the new column to the database.
-        :ignore_new_column
+        :ignore_new_column,
+        :prepend_missing_table_names
       ],
       [
         # Adds the new column to the database.
@@ -47,7 +49,7 @@ module Ranema
 
         # Makes sure that all existing records are updated.
         :add_backfill_class,
-        :add_backfill_migration,
+        :add_backfill_migration
         # :add_backfill_background_job,
         # :add_backfill_background_job_migration
       ],
@@ -61,15 +63,15 @@ module Ranema
         :copy_triggers,
         :copy_default_value,
         :copy_checks,
-        :copy_null_constraint,
-        # TODO :copy_unique_constraint,
+        :copy_null_constraint
+        # TODO: :copy_unique_constraint,
       ],
       [
         # Allows the usage of the new attribute.
         :unignore_new_column,
 
         # Replaces (most?) occurrences of the old column/attribute with the new one.
-        :replace_in_models,
+        # :replace_in_models,
         :replace_in_queries,
         :replace_in_orm_queries,
         :replace_method_calls,
