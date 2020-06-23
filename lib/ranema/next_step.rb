@@ -24,6 +24,7 @@ require "ranema/actions/ignore_old_column"
 require "ranema/actions/prepend_missing_table_names"
 require "ranema/actions/remove_deprecation_warning_rails"
 require "ranema/actions/remove_old_column"
+require "ranema/actions/replace_in_factories"
 require "ranema/actions/replace_in_models"
 require "ranema/actions/replace_in_named_files"
 require "ranema/actions/replace_in_queries"
@@ -71,7 +72,7 @@ module Ranema
         :unignore_new_column,
 
         # Replaces (most?) occurrences of the old column/attribute with the new one.
-        # :replace_in_models,
+        :replace_in_factories,
         :replace_in_queries,
         :replace_in_orm_queries,
         :replace_method_calls,

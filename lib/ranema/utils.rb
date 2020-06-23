@@ -10,6 +10,8 @@ module Ranema
     MIGRATIONS_DIR = Rails.root.join("db", "migrate")
     JOBS_DIR = Rails.root.join("app", "jobs")
     RENAMES_DIR = Rails.root.join("db", "ranema").tap { |path| path.exist? || path.mkdir }
+    SEARCH_DIRS = ["app", "lib", "spec"].freeze
+    REPLACE_DIRS = ["app", "lib", "spec"].freeze
 
     # Returns a list of models that use the given table.
     # It removes any sti submodels to reduce the number of changes that are needed.
@@ -29,6 +31,10 @@ module Ranema
 
     def model
       @model ||= models.first
+    end
+
+    def model_name
+      @model_name ||= model.name.snakecase
     end
 
     # @return [ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
@@ -57,6 +63,33 @@ module Ranema
       file = file.exist? ? file : Pathname.new("#{Ranema::ROOT_DIR}/ranema/templates/#{name}.rb.tt")
 
       ERB.new(file.binread, trim_mode: "-").result_with_hash(options)
+    end
+
+    # @return [Array<String>] array of all files names to search through.
+    def search_in_files
+      SEARCH_DIRS
+        .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*")] }
+        .select { |entry| File.file?(entry) }
+    end
+
+    # @return [Array<String>] array of files names that are linked to the table in which the rename takes place.
+    def replace_in_files
+      REPLACE_DIRS
+        .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*#{model_name}*")] }
+        .concat(REPLACE_DIRS.flat_map { |dir| Dir[Rails.root.join(dir, "**", model_name, "**", "*")] })
+        .select { |entry| File.file?(entry) }
+        .reject { |file_name| file_names_to_skip.match?(file_name) }
+    end
+
+    # @return [Regexp] regexp with files where just the name of the model in the filename is a false-positive.
+    def file_names_to_skip
+      @file_names_to_skip ||= Regexp.new(
+        ActiveRecord::Base
+        .descendants
+        .map { |klass| klass.name.snakecase }
+        .select { |name| name.include?(model_name) && name != model_name }
+        .join("|")
+      )
     end
 
     # @return []

@@ -12,7 +12,7 @@ module Ranema
 
       def perform
         files.each do |file|
-          text = file.tap(&:rewind).read.gsub(/\W(#{variable_names})\.#{old_column_name}\W/) do |match|
+          text = file.read.gsub(/\W(#{variable_names})\.#{old_column_name}\W/) do |match|
             match.sub(old_column_name, new_column_name)
           end
 
@@ -26,13 +26,11 @@ module Ranema
 
       def files
         @files ||=
-          Dir[Rails.root.join("app", "**", "*")].map do |path|
-            next unless path.include?(".")
-
+          search_in_files.map do |path|
             file = File.new(path)
             next unless file.read.match?(/\W(#{variable_names})\.#{old_column_name}\W/)
 
-            file
+            file.tap(&:rewind)
           rescue ArgumentError # invalid byte sequence in UTF-8
             nil
           end.compact
