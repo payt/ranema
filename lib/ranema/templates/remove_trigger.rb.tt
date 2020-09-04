@@ -3,15 +3,15 @@
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up
     safety_assured do
-      execute(<<~SQL)
-<%= trigger.gsub(/^(?!$)/, "        ").chomp %>
+      exec_query(<<~SQL)
+        DROP FUNCTION IF EXISTS <%= trigger_name %> CASCADE;
       SQL
     end
   end
 
   def down
-    exec_query(<<~SQL)
-      DROP FUNCTION IF EXISTS <%= trigger_name %> CASCADE;
+    execute(<<~SQL)
+<%= trigger.gsub(/^(?!$)/, "      ").chomp %>
     SQL
   end
 end

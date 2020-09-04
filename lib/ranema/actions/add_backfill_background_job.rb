@@ -13,7 +13,6 @@ module Ranema
         File.write(backfill_file_path, template)
       end
 
-      # @return [Boolean] true if the new column has already been added to all ignore lists.
       def performed?
         !sidekiq_job_class_name.safe_constantize.nil?
       end

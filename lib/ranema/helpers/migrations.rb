@@ -101,30 +101,28 @@ module Ranema
         write_file(file, migration_name)
       end
 
-      def add_trigger(table_name, trigger, function_name)
-        migration_name = "add_trigger_#{table_name}_#{function_name}"
+      def add_trigger(table_name, trigger, trigger_name)
+        migration_name = "add_trigger_#{table_name}_#{trigger_name}"
 
         file = render_template(
           "add_trigger",
           migration_class_name: migration_name.camelcase,
           table_name: table_name,
           trigger: trigger,
-          function_name: function_name
+          trigger_name: trigger_name
         )
 
         write_file(file, migration_name)
       end
 
-      def add_triggers(table_name, old_name, new_name)
-        migration_name = "add_triggers_on_#{old_name}_#{new_name}_for_#{table_name}"
+      def remove_trigger(trigger_name, trigger)
+        migration_name = "remove_trigger_#{trigger_name}"
 
         file = render_template(
-          "add_triggers",
+          "remove_trigger",
           migration_class_name: migration_name.camelcase,
-          table_name: table_name,
-          old_name: old_name,
-          new_name: new_name,
-          trigger: "rename_#{old_name}_#{new_name}"
+          trigger_name: trigger_name,
+          trigger: trigger
         )
 
         write_file(file, migration_name)

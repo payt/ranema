@@ -2,9 +2,9 @@
 
 require "rake"
 
-# @example rake rename[administrations,company_name,name]
+# @example rake ranema[administrations,company_name,name]
 desc "Creates a draft PR to rename the column of a table."
-task :rename, [:table_name, :old_column_name, :new_column_name, :start_step] do |task, args|
+task :ranema, [:table_name, :old_column_name, :new_column_name, :start_step] do |task, args|
   require "ranema/next_step"
 
   Ranema::NextStep.call(args.to_h)

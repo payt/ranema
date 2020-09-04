@@ -77,7 +77,7 @@ module Ranema
         new_column_name: new_column_name
       }
       item[:next_step] = next_step
-      item[:last_step_date] = Time.zone.today.strftime
+      item[:last_step_date] = Time.new.strftime("%Y-%m-%d")
 
       remove
       add(item)

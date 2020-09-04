@@ -12,30 +12,26 @@ module Ranema
       end
 
       def trigger_name
-        "rename_#{old_column_name}_#{new_column_name}"
+        "rename_#{table_name}_#{old_column_name}_#{new_column_name}"
       end
 
       private
 
       def perform
-        add_trigger(table_name, trigger, function_name)
+        add_trigger(table_name, trigger, trigger_name)
       end
 
       def performed?
         exec_query(
           "SELECT exists(SELECT * FROM pg_proc WHERE proname = $1)",
           "SQL",
-          [[nil, function_name]]
+          [[nil, trigger_name]]
         ).to_a.first["exists"]
-      end
-
-      def function_name
-        trigger_name
       end
 
       def trigger
         <<~SQL
-          CREATE OR REPLACE FUNCTION #{function_name}() RETURNS trigger
+          CREATE OR REPLACE FUNCTION #{trigger_name}() RETURNS trigger
           LANGUAGE plpgsql VOLATILE
           AS $$
           BEGIN
@@ -49,7 +45,7 @@ module Ranema
           ON #{table_name}
           FOR EACH ROW
           WHEN (pg_trigger_depth() = 0)
-          EXECUTE PROCEDURE #{function_name}();
+          EXECUTE PROCEDURE #{trigger_name}();
         SQL
       end
     end

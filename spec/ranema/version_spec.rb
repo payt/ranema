@@ -2,6 +2,6 @@
 
 RSpec.describe Ranema do
   it "has a version number" do
-    expect(Ranema::VERSION).not_to be nil
+    expect(Ranema::VERSION).to match(/\A\d+\.\d+\.\d+\z/)
   end
 end

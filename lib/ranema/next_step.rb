@@ -14,8 +14,8 @@ require "ranema/actions/add_sanity_check_constraint"
 require "ranema/actions/copy_checks"
 require "ranema/actions/copy_default_value"
 require "ranema/actions/copy_foreign_keys"
-require "ranema/actions/copy_from_new_to_old_column_trigger"
 require "ranema/actions/copy_from_old_to_new_column_trigger"
+require "ranema/actions/copy_from_old_to_new_column_with_raise_trigger"
 require "ranema/actions/copy_indexes"
 require "ranema/actions/copy_null_constraint"
 require "ranema/actions/copy_triggers"
@@ -79,9 +79,8 @@ module Ranema
         :replace_in_named_files,
 
         # Adds deprecation warnings while allowing the safe usage of the old column/attribute.
-        :copy_from_new_to_old_column_trigger,
-        :add_deprecation_warning_rails,
-        :add_deprecation_warning_postgresql
+        :copy_from_old_to_new_column_with_raise_trigger,
+        :add_deprecation_warning_rails
       ],
       [
         # Prepares the safe removal of the old column from the database.
@@ -111,7 +110,7 @@ module Ranema
       @table_name = table_name&.to_s
       @old_column_name = old_column_name&.to_s
       @new_column_name = new_column_name&.to_s
-      @start_step = start_step&.to_i || todo_item&.fetch(:next_step, 1) || 1
+      @start_step = start_step&.to_i || todo_item&.dig(:next_step) || 1
 
       validate_input
       use_furthest_todo_item if table_name.nil?

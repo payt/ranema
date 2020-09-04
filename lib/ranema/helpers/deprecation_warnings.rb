@@ -80,9 +80,9 @@ module Ranema
 
       def insert_writer
         file.insert(insert_index, <<~RUBY)
-          #{method_indentation}def #{old_column_name}=(*args)
+          #{method_indentation}def #{old_column_name}=(value)
           #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}=` instead")
-          #{method_indentation}#{indentation}super
+          #{method_indentation}#{indentation}self.#{new_column_name} = value
           #{method_indentation}end
 
         RUBY

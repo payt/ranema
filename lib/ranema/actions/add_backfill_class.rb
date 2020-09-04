@@ -21,7 +21,6 @@ module Ranema
         File.write(backfill_file_path, file)
       end
 
-      # @return [Boolean] true if the new column has already been added to all ignore lists.
       def performed?
         !backfill_class_name.safe_constantize.nil?
       end
