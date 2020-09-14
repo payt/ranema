@@ -1,0 +1,134 @@
+---
+
+# 
+sql_server: postgresql
+
+# 
+background_job_adapter: sidekiq
+
+# 
+cache_adapter: redis
+
+# 
+test_framework: rspec
+
+testing:
+  enabled: true # false
+  framework: rspec # minitest, cucumber
+  directory: spec
+
+linting:
+  indentation: "  "
+  quote: "\""
+
+# The directories in which Ranema must place new files.
+directories:
+  jobs: app/jobs
+  migrations: db/migrate
+  services: db/ranema
+  templates: lib/ranema/templates
+
+# Ranema can find code where the old attribute/column is used and replace it
+# with the new attribute/column. There a few different ways how Ranema finds these
+# occurrence, here can be defined which directories should be included for which
+# strategy:
+auto_replace:
+  # This strategy replaces all occurrences where the old attribute is used, regardless if it is 
+  # used as a method, variable or symbol. It assumes that, given the context, all mentiones reference the old column.
+  # It also checks for the auto-generated methods added by ActiveModel and ActiveRecord based on this column, 
+  # such as: old_column?, old_column_was, old_column_changed?, etc.
+  # 
+  # TODO: blacklist any calls called on variables which probably belong to models with an attribute with the same name.
+  # 
+  # It assumes that any file which includes the name of the table or that includes one of
+  # the names of models which use that table.
+  # 
+  # table_name: users
+  # class_name: User
+  # 
+  # @examples matching:
+  # - app/models/user.rb
+  # - app/controllers/users_controller.rb
+  # - app/users/admin_serializer.rb
+  # 
+  # @examples not matching:
+  # - app/models/user_group.rb
+  replace_all:
+    include: 
+      - app
+      - lib
+      - spec
+      - test
+      - features
+    exclude:
+      - spec/fixtures/vcr_cassettes
+      - test/fixtures/vcr_cassettes
+      - features
+
+  # This strategy replaces all occurrences of the old column name in sql queries.
+  # 
+  # It will only replace the old columns where it is prefixed by the corresponding table name.
+  # 
+  # @examples matching:
+  # - find_by_sql("users.old_column > 3")
+  # - find_by_sql("u.old_column > 3 FROM users AS u")
+  # 
+  # @examples not matching:
+  # - find_by_sql("old_column > 3 FROM users")
+  sql_replace:
+    include: 
+      - app
+      - lib
+      - spec
+      - test
+      - features
+
+  # This strategy replaces all occurrences of the old column name in AR queries.
+  # 
+  # It will only replace the old columns where it is preceded by the corresponding table name.
+  # 
+  # @examples matching:
+  # - User.where(old_column: x)
+  # - users.where(old_column: x)
+  # - users.pluck(:old_column)
+  # - users.select("some_column", "old_column")
+  # 
+  # @examples not matching:
+  # - UserGroup.where(old_column: x)
+  # - user.blogs.where(old_column: x)
+  # - User.find(1).blogs.where(old_column: x)
+  active_record_replace:
+    include: 
+      - app
+      - lib
+      - spec
+      - test
+      - features
+
+  # Replaces all method calls to the old attribute it can be relatively certain of
+  #
+  # @examples matching:
+  # - user.old_column
+  # - @user.old_column
+  # - new_user.old_column
+  # - user.reload.old_column
+  # - user.old_column?
+  # - user.old_column_was
+  # - user.old_column_changed?
+  # - users.index_with(&:old_column?)
+  # - users.select(&:condition?).map(&:old_column)
+  #
+  # @examples not matching:
+  # - u.old_column (you should give your variables better names)
+  # - @@user.old_column (do not use class variables)
+  # - $user.old_column (do not use global variables)
+  # - user_new.old_column (end your variable with the datatype instead of starting with it)
+  # - admin_user.old_column (assuming AdminUser is a class with a different table it will skip it)
+  # - user.send(:old_column) (the AR attribute is public so `send` calls are never checked)
+  method_call_replace:
+    include: 
+      - app
+      - lib
+      - spec
+      - test
+      - features

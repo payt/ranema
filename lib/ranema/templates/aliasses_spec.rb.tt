@@ -1,0 +1,47 @@
+# frozen_string_literal: true
+
+RSpec.describe <%= model %> do
+<%= i %>let(:described_instance) { described_class.new }
+
+<%= i %>describe <%= q %>#<%= old_column_name %><%= q %> do
+<%= i  * 2 %>subject(:<%= old_column_name %>) { described_instance.<%= old_column_name %> }
+
+<%= i  * 2 %>before do
+<%= i  * 3 %>allow(described_instance).to receive(:<%= new_column_name %>)
+<%= i  * 2 %>end
+
+<%= i * 2 %>it <%= q %>sends a deprecation warning<%= q %> do
+<%= i * 3 %>expect(ActiveSupport::Deprecation).to receive(:warn)
+
+<%= i * 3 %><%= old_column_name %>
+<%= i * 2 %>end
+
+<%= i * 2 %>it <%= q %>calls the new attribute<%= q %> do
+<%= i * 3 %>expect(described_instance).to receive(:<%= new_column_name %>)
+
+<%= i * 3 %><%= old_column_name %>
+<%= i * 2 %>end
+<%= i %>end
+
+<%= i %>describe <%= q %>#<%= old_column_name %>=<%= q %> do
+<%= i  * 2 %>subject(:<%= old_column_name %>) { described_instance.<%= old_column_name %>(value) }
+
+<%= i  * 2 %>let(:value) { "some value" }
+
+<%= i  * 2 %>before do
+<%= i  * 3 %>allow(described_instance).to receive(:<%= new_column_name %>=)
+<%= i  * 2 %>end
+
+<%= i * 2 %>it <%= q %>sends a deprecation warning<%= q %> do
+<%= i * 3 %>expect(ActiveSupport::Deprecation).to receive(:warn)
+
+<%= i * 3 %><%= old_column_name %>
+<%= i * 2 %>end
+
+<%= i * 2 %>it <%= q %>calls the new attribute<%= q %> do
+<%= i * 3 %>expect(described_instance).to receive(:<%= new_column_name %>).with(value)
+
+<%= i * 3 %><%= old_column_name %>
+<%= i * 2 %>end
+<%= i %>end
+end

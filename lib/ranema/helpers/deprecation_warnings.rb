@@ -30,10 +30,10 @@ module Ranema
       def add
         return if warned?
 
-        insert_writer
-        insert_reader
-
+        file.insert(insert_index, template + "\n")
         File.write(location(model), file)
+
+        write_spec
       end
 
       def remove
@@ -68,24 +68,38 @@ module Ranema
         @insert_index ||= [first_instance_method_index, private_instance_index].compact.min
       end
 
-      def insert_reader
-        file.insert(insert_index, <<~RUBY)
-          #{method_indentation}def #{old_column_name}
-          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}` instead")
-          #{method_indentation}#{indentation}#{new_column_name}
-          #{method_indentation}end
-
-        RUBY
+      def template
+        render_template(
+          "aliasses",
+          method_indentation: method_indentation,
+          old_column_name: old_column_name,
+          model: model,
+          new_column_name: new_column_name
+        )
       end
 
-      def insert_writer
-        file.insert(insert_index, <<~RUBY)
-          #{method_indentation}def #{old_column_name}=(value)
-          #{method_indentation}#{indentation}ActiveSupport::Deprecation.warn(#{quote}use `#{model}##{new_column_name}=` instead")
-          #{method_indentation}#{indentation}self.#{new_column_name} = value
-          #{method_indentation}end
+      def write_spec
+        binding.pry
+        File.write(spec_dir.join(spec_filename), spec_template)
+      end
 
-        RUBY
+      def spec_dir
+        rails_root
+          .join("spec/ranema", "models", model.name.split("::")[0..-2].map(&:snakecase).join("/"))
+          .tap { |dir| FileUtils.mkdir_p(dir) }
+      end
+
+      def spec_filename
+        model.name.split("::").last.snakecase + "_spec.rb"
+      end
+
+      def spec_template
+        render_template(
+          "aliasses_spec",
+          old_column_name: old_column_name,
+          model: model,
+          new_column_name: new_column_name
+        )
       end
     end
   end

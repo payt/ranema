@@ -84,7 +84,7 @@ module Ranema
           $$;
 
           CREATE TRIGGER #{update_new_column_trigger_name}
-          BEFORE INSERT OR UPDATE OF #{new_column_name}
+          BEFORE UPDATE OF #{new_column_name}
           ON #{table_name}
           FOR EACH ROW
           WHEN (pg_trigger_depth() = 0)

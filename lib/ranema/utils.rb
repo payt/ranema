@@ -61,18 +61,19 @@ module Ranema
     def render_template(name, options)
       file = TEMPLATES_DIR.join("#{name}.rb.tt")
       file = file.exist? ? file : Pathname.new("#{Ranema::ROOT_DIR}/ranema/templates/#{name}.rb.tt")
+      options = { i: indentation, q: quote }.merge(options)
 
       ERB.new(file.binread, trim_mode: "-").result_with_hash(options)
     end
 
-    # @return [Array<String>] array of all files names to search through.
+    # @return [Array<String>] array of all file names to search through.
     def search_in_files
       SEARCH_DIRS
         .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*")] }
         .select { |entry| File.file?(entry) }
     end
 
-    # @return [Array<String>] array of files names that are linked to the table in which the rename takes place.
+    # @return [Array<String>] array of file names that are linked to the table in which the rename takes place.
     def replace_in_files
       REPLACE_DIRS
         .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*#{model_name}*")] }
