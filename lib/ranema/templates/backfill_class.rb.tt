@@ -22,7 +22,7 @@ class <%= class_name %>
   def call(page_start = pages_count)
     puts "\n"
 
-    (page_start..0).step(-1).each do |page|
+    page_start.downto(0) do |page|
       puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * (SLEEP_FACTOR + 1))}"
 
       <%= model %>.connection.exec_query(
