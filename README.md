@@ -8,9 +8,18 @@ Ranema generates a series of Pull Requests that rename a database column in step
 
 #### Step 1
 
-The first step is to tell Ranema what to do. Tell it which column to rename like so:
+The first step is to tell Ranema what to do. Tell it which column to rename using the Rake task like so:
 ```console
-rake ranema[my_table_name,old_column_name,new_column_name]
+rake ranema[table_name,old_column_name,new_column_name]
+
+# If you are using ZSH you must escape the brackets
+rake ranema\[table_name,old_column_name,new_column_name\]
+```
+
+Or using the rails console
+
+```ruby
+Ranema::NextStep.call("table_name", "old_column_name", "new_column_name")
 ```
 
 This will do a few things:
@@ -19,6 +28,12 @@ This will do a few things:
 3. It looks for any raw SQL that contains the old_column_name without the table prefix. If any are found then the table name is prefixed to the old_column_name. This prefixing prevents the breaking of queries where the `table` is joined with another table that also contains a column with the `new_column_name`.
 
 #### Step 2
+
+In order to execute the next step you can call the rake task without any arguments. Doing this will make Ranema check which renames it is working on and automatically picking up the rename process that is nearest to completion. If the are multiple renames in progress you can still specify which rename to execute the next step for by providing at least the `table_name` and the `old_column_name`. This remains true for all subsequent steps.
+
+```console
+rake ranema[table_name,old_column_name]
+```
 
 The second step is to create the column with the new name. It will add triggers to ensure that the new column is kept insync with old column and a background process is started to backfill existing records.
 
