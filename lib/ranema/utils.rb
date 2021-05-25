@@ -5,6 +5,7 @@ require "erb"
 require "rails"
 
 module Ranema
+  # Collection of convenience methods
   module Utils
     TEMPLATES_DIR = Rails.root.join("lib", "templates", "ranema")
     MIGRATIONS_DIR = Rails.root.join("db", "migrate")
@@ -42,8 +43,8 @@ module Ranema
       @old_column ||= model.columns.find { |column| column.name == old_column_name }
     end
 
-    # NOTE: when a class is in a file with a nonconventional name, its location can't be determined.
-    # NOTE: when a class is in a nonconventional location AND has no instance methods, its location can't be determined.
+    # NOTE: when a class is in a file with a unconventional name, its location can't be determined.
+    # NOTE: when a class is in a unconventional location AND has no instance methods, its location can't be determined.
     #
     # @param model [Class]
     # @return [String, nil]
@@ -69,15 +70,15 @@ module Ranema
     # @return [Array<String>] array of all file names to search through.
     def search_in_files
       SEARCH_DIRS
-        .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*")] }
+        .flat_map { |dir| Dir[rails_root.join(dir, "**", "*")] }
         .select { |entry| File.file?(entry) }
     end
 
     # @return [Array<String>] array of file names that are linked to the table in which the rename takes place.
     def replace_in_files
       REPLACE_DIRS
-        .flat_map { |dir| Dir[Rails.root.join(dir, "**", "*#{model_name}*")] }
-        .concat(REPLACE_DIRS.flat_map { |dir| Dir[Rails.root.join(dir, "**", model_name, "**", "*")] })
+        .flat_map { |dir| Dir[rails_root.join(dir, "**", "*#{model_name}*")] }
+        .concat(REPLACE_DIRS.flat_map { |dir| Dir[rails_root.join(dir, "**", model_name, "**", "*")] })
         .select { |entry| File.file?(entry) }
         .reject { |file_name| file_names_to_skip.match?(file_name) }
     end

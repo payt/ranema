@@ -63,7 +63,6 @@ auto_replace:
     exclude:
       - spec/fixtures/vcr_cassettes
       - test/fixtures/vcr_cassettes
-      - features
 
   # This strategy replaces all occurrences of the old column name in sql queries.
   # 
@@ -120,10 +119,10 @@ auto_replace:
   #
   # @examples not matching:
   # - u.old_column (you should give your variables better names)
-  # - @@user.old_column (do not use class variables)
-  # - $user.old_column (do not use global variables)
+  # - @@user.old_column (you should not store a model instance as a class variable)
+  # - $user.old_column (you should not store a model instance as a global variable)
   # - user_new.old_column (end your variable with the datatype instead of starting with it)
-  # - admin_user.old_column (assuming AdminUser is a class with a different table it will skip it)
+  # - admin_user.old_column (assuming AdminUser is a class with a different table it will deliberlty skip it)
   # - user.send(:old_column) (the AR attribute is public so `send` calls are never checked)
   method_call_replace:
     include: 
