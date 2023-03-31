@@ -54,7 +54,7 @@ module Ranema
 
           <<~RUBY
             #{base_indent}#{$LAST_MATCH_INFO[:class]}
-            #{base_indent}#{indentation}self.ignored_columns = [
+            #{base_indent}#{indentation}self.ignored_columns += [
             #{base_indent}#{indentation}#{indentation}#{quote}#{column_name}#{quote}
             #{base_indent}#{indentation}]
           RUBY
@@ -64,7 +64,7 @@ module Ranema
       def change(method)
         quoted_column_name = "#{quote}#{column_name}#{quote}"
 
-        file.gsub!(/^(?<indentation>[\t ]*)self.ignored_columns\s*=\s*\[(?<array>[^\]]+)\]\n+/) do
+        file.gsub!(/^(?<indentation>[\t ]*)self.ignored_columns\s*\+?=\s*\[(?<array>[^\]]+)\]\n+/) do
           base_indent = $LAST_MATCH_INFO[:indentation]
           array = $LAST_MATCH_INFO[:array].split(",").map(&:squish)
 
@@ -78,7 +78,7 @@ module Ranema
           array = array.sort.map { |column| "#{base_indent}#{indentation}#{column}" }.join(",\n")
 
           <<~RUBY
-            #{base_indent}self.ignored_columns = [
+            #{base_indent}self.ignored_columns += [
             #{array}
             #{base_indent}]
 
