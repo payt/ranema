@@ -57,6 +57,10 @@ Removes the old column and any code added during the rename process.
 
 ## Customization
 
+#### Templates
+
+All templates used by Ranema can be overriden in the repo. Ranema will first check if a template exists in your repo in the directory lib/templates/ranema. Within this gem you can find all used templates https://github.com/payt/ranema/tree/master/lib/ranema/templates.
+
 ## Installation
 
 Add this line to your application's Gemfile:
