@@ -102,6 +102,8 @@ module Ranema
       end
 
       def add_trigger(table_name, trigger, trigger_name)
+        raise ArgumentError, "trigger_name too long '#{trigger_name}'" if trigger_name.size > 63
+
         migration_name = "add_trigger_#{table_name}_#{trigger_name}"
 
         file = render_template(

@@ -14,6 +14,16 @@ module Ranema
     SEARCH_DIRS = ["app", "lib", "spec"].freeze
     REPLACE_DIRS = ["app", "lib", "spec"].freeze
 
+    def rename_key
+      key = "#{table_name}_#{old_column_name}_#{new_column_name}"
+      return key if key.size <= 32
+
+      key = "#{table_name}_#{old_column_name}"
+      return key if key.size <= 32
+
+      Digest::MD5.hexdigest(key)
+    end
+
     # Returns a list of models that use the given table.
     # It removes any sti submodels to reduce the number of changes that are needed.
     #

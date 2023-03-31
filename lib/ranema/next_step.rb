@@ -15,7 +15,7 @@ require "ranema/actions/copy_checks"
 require "ranema/actions/copy_default_value"
 require "ranema/actions/copy_foreign_keys"
 require "ranema/actions/copy_from_old_to_new_column_trigger"
-require "ranema/actions/copy_from_old_to_new_column_with_raise_trigger"
+require "ranema/actions/sync_triggers_with_raise"
 require "ranema/actions/copy_indexes"
 require "ranema/actions/copy_null_constraint"
 require "ranema/actions/copy_triggers"
@@ -37,13 +37,10 @@ module Ranema
   class NextStep
     STEPS = [
       [
-        # Prepares the safe adding of the new column to the database.
-        :ignore_new_column,
-        :prepend_missing_table_names
-      ],
-      [
         # Adds the new column to the database.
         :add_new_column,
+        :ignore_new_column,
+        :prepend_missing_table_names,
 
         # Makes sure that from now one the columns of new records are in sync.
         :copy_from_old_to_new_column_trigger,
@@ -51,8 +48,6 @@ module Ranema
         # Makes sure that all existing records are updated.
         :add_backfill_class,
         :add_backfill_migration
-        # :add_backfill_background_job,
-        # :add_backfill_background_job_migration
       ],
       [
         # Checks if the added trigger and backfill have done their jobs.
@@ -68,30 +63,25 @@ module Ranema
         # TODO: :copy_unique_constraint,
       ],
       [
-        # Allows the usage of the new attribute.
-        :unignore_new_column,
-
-        # Replaces (most?) occurrences of the old column/attribute with the new one.
+        # Replaces (some/most?) occurrences of the old column/attribute with the new one.
         :replace_in_factories,
         :replace_in_queries,
         :replace_in_orm_queries,
-        :replace_method_calls,
+        :replace_method_calls, # TODO: allow to exclude directories/files. For example: Grape::Entity
         :replace_in_named_files,
 
-        # Adds deprecation warnings while allowing the safe usage of the old column/attribute.
-        :copy_from_old_to_new_column_with_raise_trigger,
-        :add_deprecation_warning_rails
-      ],
-      [
-        # Prepares the safe removal of the old column from the database.
-        :ignore_old_column
+        # Allows the usage of the new attribute.
+        :unignore_new_column,
+        :ignore_old_column,
+
+        # # Adds deprecation warnings while allowing the safe usage of the old column/attribute.
+        :sync_triggers_with_raise
       ],
       [
         # Removes the old column from the database, point of no return
         :remove_old_column,
 
         # Cleanup the codebase.
-        :remove_deprecation_warning_rails,
         :unignore_old_column
       ]
     ].freeze
