@@ -38,7 +38,8 @@ module Ranema
         @triggers ||= exec_query(
           query,
           "SQL",
-          [[nil, table_name], [nil, copy_trigger_names]]
+          [[nil, table_name],
+           [nil, CopyFromOldToNewColumnTrigger.new(table_name, old_column_name, new_column_name).trigger_name]]
         ).to_a
       end
 
@@ -48,14 +49,6 @@ module Ranema
           WHERE "information_schema"."triggered_update_columns"."event_object_table" = $1
           AND "information_schema"."triggered_update_columns"."trigger_name" NOT IN($2)
         SQL
-      end
-
-      # @return [String] the names of the triggers to copy values between the old to the new columns..
-      def copy_trigger_names
-        [
-          CopyFromOldToNewColumnTrigger.new(table_name, old_column_name, new_column_name).trigger_name,
-          CopyFromNewToOldColumnTrigger.new(table_name, old_column_name, new_column_name).trigger_name
-        ].map { |name| "'#{name}'" }.join(", ")
       end
     end
   end
