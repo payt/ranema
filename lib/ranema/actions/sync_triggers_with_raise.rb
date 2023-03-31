@@ -9,11 +9,11 @@ module Ranema
     # The new triggers can handle values given for both the old and new columns.
     # If a value for the old column is given a warning is logged.
     # If values for both columns are given but they do not match an error is raised,
-    class CopyFromOldToNewColumnWithRaiseTrigger < Base
+    class SyncTriggersWithRaise < Base
       include Helpers::Migrations
 
       def message
-        "Added triggers to keep `#{old_column_name}` and `#{new_column_name}` in sync."
+        "Added triggers to keep `#{old_column_name}` and `#{new_column_name}` in sync. Check `cat /var/log/syslog | grep '#{table_name}.#{old_column_name}'` for deprecation warnings!"
       end
 
       def trigger_names
@@ -40,7 +40,7 @@ module Ranema
       end
 
       def update_old_column_trigger_name
-        "rename_#{table_name}_#{old_column_name}_#{new_column_name}_1"
+        "#{rename_key}_update_old_column"
       end
 
       def update_old_column_trigger
@@ -69,7 +69,7 @@ module Ranema
       end
 
       def update_new_column_trigger_name
-        "rename_#{table_name}_#{old_column_name}_#{new_column_name}_2"
+        "#{rename_key}_update_new_column"
       end
 
       def update_new_column_trigger
@@ -93,7 +93,7 @@ module Ranema
       end
 
       def insert_trigger_name
-        "rename_#{table_name}_#{old_column_name}_#{new_column_name}_insert"
+        "#{rename_key}_insert"
       end
 
       def insert_trigger

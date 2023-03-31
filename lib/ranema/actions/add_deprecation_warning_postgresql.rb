@@ -48,7 +48,7 @@ module Ranema
       end
 
       def trigger_name
-        "deprecated_#{table_name}_#{old_column_name}"
+        "#{rename_key}_deprecation_warning"
       end
     end
   end

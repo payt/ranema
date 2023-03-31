@@ -12,7 +12,7 @@ module Ranema
       end
 
       def trigger_name
-        "rename_#{table_name}_#{old_column_name}_#{new_column_name}"
+        "#{rename_key}_sync_new_column"
       end
 
       private
