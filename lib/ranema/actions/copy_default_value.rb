@@ -18,7 +18,9 @@ module Ranema
       end
 
       def performed?
-        old_column.default.nil? || old_column.default == new_column_default
+        old_column.default.nil? ||
+        old_column.default_function.nil? ||
+        (old_column.default || old_column.default_function) == new_column_default
       end
 
       def new_column_default
