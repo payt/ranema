@@ -3,9 +3,12 @@
 require "ranema/todo"
 require "ranema/actions/base"
 
+require "ranema/actions/add_backfill_background_job_migration"
+require "ranema/actions/add_backfill_background_job"
 require "ranema/actions/add_backfill_class"
 require "ranema/actions/add_backfill_migration"
 require "ranema/actions/add_deprecation_warning_postgresql"
+require "ranema/actions/add_deprecation_warning_rails"
 require "ranema/actions/add_new_column"
 require "ranema/actions/add_sanity_check_constraint"
 require "ranema/actions/copy_checks"
@@ -19,6 +22,7 @@ require "ranema/actions/ignore_new_column"
 require "ranema/actions/ignore_old_column"
 require "ranema/actions/prepend_missing_table_names"
 require "ranema/actions/remove_backfill_class"
+require "ranema/actions/remove_deprecation_warning_rails"
 require "ranema/actions/remove_old_column"
 require "ranema/actions/replace_in_factories"
 require "ranema/actions/replace_in_models"
@@ -57,7 +61,7 @@ module Ranema
         :copy_default_value,
         :copy_checks,
         :copy_null_constraint,
-        :copy_unique_constraint,
+        :copy_unique_constraint
       ],
       [
         # Replaces (some/most?) occurrences of the old column/attribute with the new one.
