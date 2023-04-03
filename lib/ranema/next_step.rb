@@ -32,6 +32,7 @@ require "ranema/actions/replace_in_orm_queries"
 require "ranema/actions/replace_method_calls"
 require "ranema/actions/unignore_new_column"
 require "ranema/actions/unignore_old_column"
+require "ranema/actions/copy_indirectly_dependent_triggers"
 
 module Ranema
   class NextStep
@@ -59,7 +60,8 @@ module Ranema
         :copy_triggers,
         :copy_default_value,
         :copy_checks,
-        :copy_null_constraint
+        :copy_null_constraint,
+        :copy_indirectly_dependent_triggers
         # TODO: :copy_unique_constraint,
       ],
       [
