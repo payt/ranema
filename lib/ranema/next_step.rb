@@ -15,23 +15,25 @@ require "ranema/actions/copy_checks"
 require "ranema/actions/copy_default_value"
 require "ranema/actions/copy_foreign_keys"
 require "ranema/actions/copy_from_old_to_new_column_trigger"
-require "ranema/actions/sync_triggers_with_raise"
 require "ranema/actions/copy_indexes"
 require "ranema/actions/copy_null_constraint"
 require "ranema/actions/copy_triggers"
 require "ranema/actions/ignore_new_column"
 require "ranema/actions/ignore_old_column"
 require "ranema/actions/prepend_missing_table_names"
+require "ranema/actions/remove_backfill_class"
 require "ranema/actions/remove_deprecation_warning_rails"
 require "ranema/actions/remove_old_column"
 require "ranema/actions/replace_in_factories"
 require "ranema/actions/replace_in_models"
 require "ranema/actions/replace_in_named_files"
-require "ranema/actions/replace_in_queries"
 require "ranema/actions/replace_in_orm_queries"
+require "ranema/actions/replace_in_queries"
 require "ranema/actions/replace_method_calls"
+require "ranema/actions/sync_triggers_with_raise"
 require "ranema/actions/unignore_new_column"
 require "ranema/actions/unignore_old_column"
+require "ranema/actions/copy_indirectly_dependent_triggers"
 
 module Ranema
   class NextStep
@@ -59,8 +61,9 @@ module Ranema
         :copy_triggers,
         :copy_default_value,
         :copy_checks,
-        :copy_null_constraint
-        # TODO: :copy_unique_constraint,
+        :copy_null_constraint,
+        :copy_indirectly_dependent_triggers,
+        :copy_unique_constraint
       ],
       [
         # Replaces (some/most?) occurrences of the old column/attribute with the new one.
@@ -82,6 +85,7 @@ module Ranema
         :remove_old_column,
 
         # Cleanup the codebase.
+        :remove_backfill_class,
         :unignore_old_column
       ]
     ].freeze
