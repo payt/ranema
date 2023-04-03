@@ -3,8 +3,8 @@
 require "ranema/todo"
 require "ranema/actions/base"
 
-require "ranema/actions/add_backfill_background_job_migration"
 require "ranema/actions/add_backfill_background_job"
+require "ranema/actions/add_backfill_background_job_migration"
 require "ranema/actions/add_backfill_class"
 require "ranema/actions/add_backfill_migration"
 require "ranema/actions/add_deprecation_warning_postgresql"
@@ -33,6 +33,7 @@ require "ranema/actions/replace_method_calls"
 require "ranema/actions/sync_triggers_with_raise"
 require "ranema/actions/unignore_new_column"
 require "ranema/actions/unignore_old_column"
+require "ranema/actions/copy_indirectly_dependent_triggers"
 
 module Ranema
   class NextStep
@@ -61,6 +62,7 @@ module Ranema
         :copy_default_value,
         :copy_checks,
         :copy_null_constraint,
+        :copy_indirectly_dependent_triggers,
         :copy_unique_constraint
       ],
       [
