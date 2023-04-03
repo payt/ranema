@@ -85,12 +85,12 @@ module Ranema
 
       def spec_dir
         rails_root
-          .join("spec/ranema", "models", model.name.split("::")[0..-2].map(&:snakecase).join("/"))
+          .join("spec/ranema", "models", model.name.split("::")[0..-2].map(&:underscore).join("/"))
           .tap { |dir| FileUtils.mkdir_p(dir) }
       end
 
       def spec_filename
-        model.name.split("::").last.snakecase + "_spec.rb"
+        model.name.split("::").last.underscore + "_spec.rb"
       end
 
       def spec_template

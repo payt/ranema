@@ -15,15 +15,15 @@ module Ranema
         "Created migration to add column to the database."
       end
 
+      # @return [Boolean] true if the action has already been performed.
+      def performed?
+        column_exists?(table_name, new_column_name)
+      end
+
       private
 
       def perform
         add_column(table_name, old_column, new_column_name)
-      end
-
-      # @return [Boolean] true if the new column has already been added to all ignore lists.
-      def performed?
-        column_exists?(table_name, new_column_name)
       end
     end
   end

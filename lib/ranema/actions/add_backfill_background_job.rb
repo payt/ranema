@@ -34,7 +34,7 @@ module Ranema
       end
 
       def backfill_file_path
-        JOBS_DIR.join("#{sidekiq_job_class_name.snakecase}.rb")
+        JOBS_DIR.join("#{sidekiq_job_class_name.underscore}.rb")
       end
     end
   end

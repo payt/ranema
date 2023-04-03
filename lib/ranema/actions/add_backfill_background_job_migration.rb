@@ -18,7 +18,7 @@ module Ranema
       end
 
       def performed?
-        Dir.glob(MIGRATIONS_DIR.join("*_#{migration_class_name.snakecase}.rb")).any?
+        Dir.glob(MIGRATIONS_DIR.join("*_#{migration_class_name.underscore}.rb")).any?
       end
 
       def template
@@ -26,7 +26,7 @@ module Ranema
           "backfill_sidekiq_job_migration",
           migration_class_name: migration_class_name,
           sidekiq_job_class_name: sidekiq_job_class_name,
-          sidekiq_job_location: "app/jobs/#{sidekiq_job_class_name.snakecase}" # TODO: make dynamic
+          sidekiq_job_location: "app/jobs/#{sidekiq_job_class_name.underscore}" # TODO: make dynamic
         )
       end
 
@@ -39,7 +39,7 @@ module Ranema
       end
 
       def migration_file_path
-        MIGRATIONS_DIR.join("#{migration_number}_#{migration_class_name.snakecase}.rb")
+        MIGRATIONS_DIR.join("#{migration_number}_#{migration_class_name.underscore}.rb")
       end
     end
   end

@@ -30,7 +30,7 @@ module Ranema
       end
 
       def backfill_file_path
-        RENAMES_DIR.join("#{backfill_class_name.snakecase}.rb")
+        RENAMES_DIR.join("#{backfill_class_name.underscore}.rb")
       end
     end
   end

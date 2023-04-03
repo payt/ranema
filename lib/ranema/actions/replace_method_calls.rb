@@ -37,7 +37,7 @@ module Ranema
       end
 
       def variable_names
-        @variable_names ||= models.map { |model| model.name.snakecase }.join("|")
+        @variable_names ||= models.map { |model| model.name.underscore }.join("|")
       end
     end
   end
