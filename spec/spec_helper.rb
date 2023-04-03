@@ -18,7 +18,18 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  # Rereates test database on each run
   config.before(:suite) do
+    ActiveRecord::Tasks::PostgreSQLDatabaseTasks.new(ActiveRecord::Base.connection_db_config)
+      .tap(&:purge)
+      .tap { |conn| conn.structure_load(Pathname(__dir__).join("rails_app/db/structure.sql").to_s, nil) }
+  end
 
+  # Rereates test database on each run
+  config.before(:suite) do
+    FileUtils.rm_rf("tmp/rails_app")
+    FileUtils.mkdir("tmp/rails_app")
   end
 end
+
+RSpec::Matchers.define_negated_matcher :not_change, :change

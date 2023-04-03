@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def up
+    safety_assured do
+      exec_query(<<~SQL)
+        ALTER TABLE
+          <%= table_name %>
+        ADD
+          CONSTRAINT <%= check_name %>
+          CHECK ((<%= check %>))
+          NOT VALID;
+      SQL
+    end
+  end
+
+  def down
+    exec_query(<<~SQL)
+      ALTER TABLE
+        <%= table_name %>
+      DROP
+        CONSTRAINT <%= check_name %>;
+    SQL
+  end
+end

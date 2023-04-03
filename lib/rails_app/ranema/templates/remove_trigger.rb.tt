@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def up
+    safety_assured do
+      exec_query(<<~SQL)
+        DROP FUNCTION IF EXISTS <%= trigger_name %> CASCADE;
+      SQL
+    end
+  end
+
+  def down
+    execute(<<~SQL)
+<%= trigger.gsub(/^(?!$)/, "      ").chomp %>
+    SQL
+  end
+end

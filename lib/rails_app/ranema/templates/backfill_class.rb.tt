@@ -1,0 +1,87 @@
+# frozen_string_literal: true
+
+class <%= class_name %>
+  DURATIONS_SIZE = 12
+  # With a sleep factor of 3, the process will spend 3 times more on sleeping than on querys.
+  SLEEP_FACTOR = 3
+
+  class << self
+    delegate :call, to: :new
+
+    def durations
+      @durations ||= Array.new(DURATIONS_SIZE) { 100 }
+    end
+  end
+
+  ActiveSupport::Notifications.subscribe("sql.active_record") do |*args|
+    event = ActiveSupport::Notifications::Event.new(*args)
+    durations.push(event.duration).shift if event.payload[:name] == "rename.<%= new_column_name %>"
+  end
+
+  # @param page_start [Integer] the page from which to start the backfill process.
+  def call(page_start = pages_count)
+    puts "\n"
+
+    page_start.downto(0) do |page|
+      puts "\033[A\033[KPAGE: #{page}/#{pages_count} | ETA: #{duration_formatted(page * average_duration * (SLEEP_FACTOR + 1))}"
+
+      <%= model %>.connection.exec_query(
+        update_query,
+        "rename.<%= new_column_name %>",
+        [[nil, page]],
+        prepare: page_start == pages_count
+      )
+
+      sleep(average_duration * SLEEP_FACTOR)
+    end
+  end
+
+  private
+
+  # @return [Hash] Information required to calculate the page_size and pages_count.
+  def page_info
+    @page_info ||= <%= model %>.connection.exec_query(
+      "SELECT pg_relation_size('<%= model.table_name %>'), current_setting('block_size')::int AS block_size"
+    ).to_a.first
+  end
+
+  # @return [Integer] The maximum number of records on a page.
+  def page_size
+    page_info["block_size"] / 4
+  end
+
+  # @return [Integer] The total number of pages in the table.
+  def pages_count
+    @pages_count ||= page_info["pg_relation_size"] / page_info["block_size"]
+  end
+
+  # @return [String] The query to update all records of a single page.
+  def update_query
+    @update_query ||= <<~SQL
+      UPDATE "<%= model.table_name %>"
+      SET "<%= new_column_name %>" = "<%= old_column_name %>"
+      WHERE "<%= old_column_name %>" IS NOT NULL
+      AND ("<%= new_column_name %>" IS NULL OR "<%= new_column_name %>" <> "<%= old_column_name %>")
+      AND ctid = ANY (ARRAY
+        (SELECT ('(' || $1 || ',' || s.i || ')')::tid
+          FROM generate_series(0, #{page_size}) AS s(i)
+        )
+      );
+    SQL
+  end
+
+  # @return [Float] Average query duration in seconds, ignoring the 2 most extreme values.
+  def average_duration
+    self.class.durations.sort[1..-2].sum.fdiv(DURATIONS_SIZE * 1000)
+  end
+
+  # @param duration [Float] the duration in seconds.
+  # @return [String] the duration formatted as HH:MM:SS
+  def duration_formatted(duration)
+    hours = (duration / 3600).floor
+    minutes = ((duration % 3600) / 60).floor
+    seconds = hours.zero? ? (duration % 60).ceil : 0
+
+    "#{hours}:#{minutes.to_s.rjust(2, '0')}:#{seconds.to_s.rjust(2, '0')}"
+  end
+end

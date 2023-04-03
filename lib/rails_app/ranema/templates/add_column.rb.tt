@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    safety_assured do
+      add_column(
+        :<%= table_name %>,
+        :<%= name %>,
+        :<%= old_column.type %>,
+        <%= old_column.limit ? "limit: #{old_column.limit}," : "" %>
+        <%= old_column.precision ? "precision: #{old_column.precision}," : "" %>
+        <%= old_column.scale ? "scale: #{old_column.scale}," : "" %>
+        <%= old_column.default ? "default: #{old_column.default}," : "" %>
+      )
+    end
+  end
+end
