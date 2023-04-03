@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-require Rails.root.join("<%= sidekiq_job_location %>")
-
-class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
-  def up
-    <%= sidekiq_job_class_name %>.perform_in(15.minutes.from_now)
-  end
-end

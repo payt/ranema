@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-class <%= sidekiq_job_class_name %>
-  include Sidekiq::Worker
-
-  def perform
-    <%= backfill_class_name %>.call
-  end
-end

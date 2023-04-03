@@ -1,9 +1,0 @@
-<%= method_indentation %>def <%= old_column_name %>
-<%= method_indentation %><%= i %>ActiveSupport::Deprecation.warn(<%= q %>use `<%= model %>#<%= new_column_name %>` instead<%= q %>)
-<%= method_indentation %><%= i %><%= new_column_name %>
-<%= method_indentation %>end
-
-<%= method_indentation %>def <%= old_column_name %>=(value)
-<%= method_indentation %><%= i %>ActiveSupport::Deprecation.warn(<%= q %>use `<%= model %>#<%= new_column_name %>=` instead<%= q %>)
-<%= method_indentation %><%= i %>self.<%= new_column_name %> = value
-<%= method_indentation %>end
