@@ -79,7 +79,6 @@ module Ranema
       end
 
       def write_spec
-        binding.pry
         File.write(spec_dir.join(spec_filename), spec_template)
       end
 

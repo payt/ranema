@@ -34,9 +34,12 @@ module Ranema
         load_app
 
         list = ActiveRecord::Base.descendants.select { |model| model.table_name == table_name }
-        return list unless list.many?
 
-        list.reject { |item| item.ancestors.any? { |ancestor| item != ancestor && list.include?(ancestor) } }
+        if list.many?
+          list.reject { |item| item.ancestors.any? { |ancestor| item != ancestor && list.include?(ancestor) } }
+        else
+          list
+        end
       end
     end
 
@@ -95,12 +98,11 @@ module Ranema
 
     # @return [Regexp] regexp with files where just the name of the model in the filename is a false-positive.
     def file_names_to_skip
-      @file_names_to_skip ||= Regexp.new(
+      @file_names_to_skip ||= Regexp.union(
         ActiveRecord::Base
         .descendants
         .map { |klass| klass.name.underscore }
         .select { |name| name.include?(model_name) && name != model_name }
-        .join("|")
       )
     end
 

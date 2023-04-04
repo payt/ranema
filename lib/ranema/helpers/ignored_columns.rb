@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "pry"
 require "ranema/utils"
 
 module Ranema
@@ -51,10 +50,10 @@ module Ranema
 
       def create
         file.gsub!(/^(?<indentation>[\t ]*)(?<class>class .*#{model.name.demodulize}.*$)/) do
-          base_indent = $LAST_MATCH_INFO[:indentation]
+          base_indent = Regexp.last_match[:indentation]
 
           <<~RUBY
-            #{base_indent}#{$LAST_MATCH_INFO[:class]}
+            #{base_indent}#{Regexp.last_match[:class]}
             #{base_indent}#{indentation}self.ignored_columns += [
             #{base_indent}#{indentation}#{indentation}#{quote}#{column_name}#{quote}
             #{base_indent}#{indentation}]
@@ -66,8 +65,8 @@ module Ranema
         quoted_column_name = "#{quote}#{column_name}#{quote}"
 
         file.gsub!(/^(?<indentation>[\t ]*)self.ignored_columns\s*\+?=\s*\[(?<array>[^\]]+)\]\n+/) do
-          base_indent = $LAST_MATCH_INFO[:indentation]
-          array = $LAST_MATCH_INFO[:array].split(",").map(&:squish)
+          base_indent = Regexp.last_match[:indentation]
+          array = Regexp.last_match[:array].split(",").map(&:squish)
 
           if method == :add
             array.push(quoted_column_name)
