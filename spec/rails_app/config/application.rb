@@ -10,6 +10,5 @@ Bundler.require(*Rails.groups)
 
 module RailsApp
   class Application < Rails::Application
-    # config.eager_load_paths << Rails.root.join("extras")
   end
 end
