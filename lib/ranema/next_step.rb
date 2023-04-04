@@ -44,7 +44,7 @@ module Ranema
         :ignore_new_column,
         :prepend_missing_table_names,
 
-        # Makes sure that from now one the columns of new records are in sync.
+        # Makes sure that from now on the columns of new records are in sync.
         :copy_from_old_to_new_column_trigger,
 
         # Makes sure that all existing records are updated.
@@ -136,9 +136,9 @@ module Ranema
         raise ArgumentError, "A rename of `old_column_name` is already in progress."
       end
 
-      if table_name.nil? && todo_item_furthest.nil?
-        raise ArgumentError, "Provide a table_name, old_column_name and new_column_name"
-      end
+      return unless table_name.nil? && todo_item_furthest.nil?
+
+      raise ArgumentError, "Provide a table_name, old_column_name and new_column_name"
     end
 
     def use_furthest_todo_item
