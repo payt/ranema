@@ -18,8 +18,7 @@ module Ranema
       end
 
       def performed?
-        models.all? { |model| Helpers::IgnoredColumns.ignored?(model, new_column_name) } ||
-          AddNewColumn.new(table_name, nil, new_column_name).performed?
+        models.all? { |model| Helpers::IgnoredColumns.ignored?(model, new_column_name) }
       end
     end
   end
