@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "ranema/helpers/ignored_columns"
+require "ranema/actions/add_new_column"
 
 module Ranema
   module Actions
@@ -17,8 +18,7 @@ module Ranema
       end
 
       def performed?
-        models.all? { |model| Helpers::IgnoredColumns.ignored?(model, new_column_name) } ||
-          AddNewColumn.new(table_name, nil, new_column_name).send(:performed?)
+        models.all? { |model| Helpers::IgnoredColumns.ignored?(model, new_column_name) }
       end
     end
   end

@@ -13,7 +13,8 @@ module Ranema
       include Helpers::Migrations
 
       def message
-        "Added triggers to keep `#{old_column_name}` and `#{new_column_name}` in sync. Check `cat /var/log/syslog | grep '#{table_name}.#{old_column_name}'` for deprecation warnings!"
+        "Added triggers to keep `#{old_column_name}` and `#{new_column_name}` in sync. \
+        Check `cat /var/log/syslog | grep '#{table_name}.#{old_column_name}'` for deprecation warnings!"
       end
 
       def trigger_names

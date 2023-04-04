@@ -36,11 +36,12 @@ module Ranema
 
       private
 
+      # Performs the action.
       def perform
         raise NotImplementedError
       end
 
-      # @return [Boolean] true if the new column has already been added to all ignore lists.
+      # @return [Boolean] true if the action has been executed.
       def performed?
         raise NotImplementedError
       end

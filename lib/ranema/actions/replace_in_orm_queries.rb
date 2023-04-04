@@ -37,7 +37,7 @@ module Ranema
       end
 
       def model_names
-        @model_names ||= models.flat_map { |model| [model.name, model.name.snakecase.pluralize] }.join("|")
+        @model_names ||= models.flat_map { |model| [model.name, model.name.underscore.pluralize] }.join("|")
       end
     end
   end

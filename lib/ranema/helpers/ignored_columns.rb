@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require "pry"
 require "ranema/utils"
 
 module Ranema
   module Helpers
-    # Implements methods to add and remove columns from the ignore_list of a model.
+    # Implements methods to add and remove columns from the ignored_columns of a model.
     class IgnoredColumns
       include Utils
 

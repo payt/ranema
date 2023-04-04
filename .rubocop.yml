@@ -4,6 +4,7 @@ require:
 
 AllCops:
   TargetRubyVersion: 2.6
+  NewCops: enable
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -13,3 +14,11 @@ Style/SymbolArray:
 
 Style/WordArray:
   EnforcedStyle: brackets
+
+Metrics/BlockLength:
+  Exclude:
+  - spec/**/*_spec.rb
+
+Layout/MultilineMethodCallIndentation:
+  Exclude:
+  - spec/**/*_spec.rb

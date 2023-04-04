@@ -46,7 +46,7 @@ module Ranema
       end
 
       def model_name
-        @model_name ||= model.name.snakecase
+        @model_name ||= model.name.underscore
       end
 
       # @return [Class.new] instance of the model.

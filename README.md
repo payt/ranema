@@ -35,7 +35,7 @@ In order to execute the next step you can call the rake task without any argumen
 rake ranema[table_name,old_column_name]
 ```
 
-The second step is to create the column with the new name. It will add triggers to ensure that the new column is kept insync with old column and a background process is started to backfill existing records.
+The second step is to create the column with the new name. It will add triggers to ensure that the new column is kept in sync with old column and a background process is started to backfill existing records.
 
 #### Step 3
 
@@ -59,7 +59,7 @@ Removes the old column and any code added during the rename process.
 
 #### Templates
 
-All templates used by Ranema can be overriden in the repo. Ranema will first check if a template exists in your repo in the directory lib/templates/ranema. Within this gem you can find all used templates https://github.com/payt/ranema/tree/master/lib/ranema/templates.
+All templates used by Ranema can be overridden in the repo. Ranema will first check if a template exists in your repo in the directory lib/templates/ranema. Within this gem you can find all used templates https://github.com/payt/ranema/tree/master/lib/ranema/templates.
 
 ## Installation
 
@@ -79,7 +79,7 @@ Or install it yourself as:
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

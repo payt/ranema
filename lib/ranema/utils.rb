@@ -7,10 +7,11 @@ require "rails"
 module Ranema
   # Collection of convenience methods
   module Utils
-    TEMPLATES_DIR = Rails.root.join("lib", "templates", "ranema")
-    MIGRATIONS_DIR = Rails.root.join("db", "migrate")
-    JOBS_DIR = Rails.root.join("app", "jobs")
-    RENAMES_DIR = Rails.root.join("db", "ranema").tap { |path| path.exist? || path.mkdir }
+    APP_ROOT = Rails.root || Pathname("spec/rails_app")
+    TEMPLATES_DIR = APP_ROOT.join("lib", "templates", "ranema")
+    MIGRATIONS_DIR = APP_ROOT.join("db", "migrate")
+    JOBS_DIR = APP_ROOT.join("app", "jobs")
+    RENAMES_DIR = APP_ROOT.join("db", "ranema").tap { |path| path.exist? || path.mkdir }
     SEARCH_DIRS = ["app", "lib", "spec"].freeze
     REPLACE_DIRS = ["app", "lib", "spec"].freeze
 
@@ -30,8 +31,7 @@ module Ranema
     # @return [Array<Class>]
     def models
       @models ||= begin
-        Rails.application.eager_load!
-        ActiveRecord::Base.connection
+        load_app
 
         list = ActiveRecord::Base.descendants.select { |model| model.table_name == table_name }
         return list unless list.many?
@@ -45,7 +45,7 @@ module Ranema
     end
 
     def model_name
-      @model_name ||= model.name.snakecase
+      @model_name ||= model.name.underscore
     end
 
     # @return [ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
@@ -59,7 +59,7 @@ module Ranema
     # @param model [Class]
     # @return [String, nil]
     def location(model)
-      file_name = "#{model.name.snakecase}.rb"
+      file_name = "#{model.name.underscore}.rb"
       conventional = rails_root.join("app", "models", file_name)
       return conventional.to_s if conventional.exist?
 
@@ -98,7 +98,7 @@ module Ranema
       @file_names_to_skip ||= Regexp.new(
         ActiveRecord::Base
         .descendants
-        .map { |klass| klass.name.snakecase }
+        .map { |klass| klass.name.underscore }
         .select { |name| name.include?(model_name) && name != model_name }
         .join("|")
       )
@@ -106,7 +106,7 @@ module Ranema
 
     # @return []
     def rails_root
-      @rails_root ||= Rails.root
+      @rails_root ||= APP_ROOT
     end
 
     # TODO: determine from codebase, or make it a setting
@@ -123,6 +123,13 @@ module Ranema
     # @return [String]
     def quote
       @quote ||= "\""
+    end
+
+    private
+
+    def load_app
+      Rails.application.eager_load!
+      ActiveRecord::Base.connection
     end
   end
 end
