@@ -27,8 +27,8 @@ RSpec.describe Ranema::Actions::AddNewColumn do
 
       let(:migration) do
         described_class
-            .new(table_name, old_column_name, new_column_name)
-            .send(:migration_name).camelcase.constantize
+          .new(table_name, old_column_name, new_column_name)
+          .send(:migration_name).camelcase.constantize
       end
 
       it "adds the new column to the table" do

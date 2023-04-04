@@ -50,9 +50,7 @@ module Ranema
 
     # @return [ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
     def old_column
-      @old_column ||= model.columns.find do |column|
-        column.name == old_column_name
-      end || raise("old column not found")
+      @old_column ||= model.columns.find { |column| column.name == old_column_name }
     end
 
     # NOTE: when a class is in a file with a unconventional name, its location can't be determined.
