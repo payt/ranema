@@ -33,6 +33,7 @@ RSpec.configure do |config|
 
   # Reverts the rails_app to its original state after running an example.
   config.after do
+    FileUtils.rm_rf(Ranema::Utils::APP_ROOT)
     FileUtils.cp_r("tmp/rails_app", Ranema::Utils::APP_ROOT.join(".."))
   end
 end

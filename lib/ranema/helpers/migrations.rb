@@ -144,6 +144,10 @@ module Ranema
         write_file(file, migration_name)
       end
 
+      def migration_exists?(name)
+        Dir[MIGRATIONS_DIR.join("*_#{name}.rb")].any?
+      end
+
       def column_exists?(*args)
         ActiveRecord::Migration.column_exists?(*args)
       end
@@ -164,6 +168,10 @@ module Ranema
 
       def write_file(file, migration_name)
         File.write(MIGRATIONS_DIR.join("#{migration_number}_#{migration_name}.rb"), file)
+      end
+
+      def create_migration(name:, content:)
+        File.write(MIGRATIONS_DIR.join("#{migration_number}_#{name}.rb"), content)
       end
 
       # Sleep for 1 second to ensure a unique migration_number.

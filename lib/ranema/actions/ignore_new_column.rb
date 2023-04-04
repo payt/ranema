@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 require "ranema/helpers/ignored_columns"
-require "ranema/actions/add_new_column"
 
 module Ranema
   module Actions
-    # Add the new column to the ignore list.
+    # Ignores the new_column, this prevents the new_column from being used before it is ready.
     class IgnoreNewColumn < Base
       def message
         "Ignored `#{table_name}`.`#{new_column_name}`."
