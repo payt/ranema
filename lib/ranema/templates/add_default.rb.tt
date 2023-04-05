@@ -2,7 +2,6 @@
 
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
-    <%= old_column.default.present? ?  change_column_default :<%= table_name %>, :<%= new_column_name %>, from: nil, to: <%= old_column.default %> : ""%>
-    <%= old_column.default_function.present? ? change_column_default :<%= table_name %>, :<%= new_column_name %>, from: nil, to: -> {"<%= old_column.default_function %>"} : ""%>
+    change_column_default :<%= table_name %>, :<%= new_column_name %>, from: nil, to: <%= old_column.default || "-> { \"#{old_column.default_function}\" }" %>
   end
 end

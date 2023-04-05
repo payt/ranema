@@ -12,7 +12,7 @@ require "ranema/actions/add_deprecation_warning_rails"
 require "ranema/actions/add_new_column"
 require "ranema/actions/add_sanity_check_constraint"
 require "ranema/actions/copy_checks"
-require "ranema/actions/copy_default_value"
+require "ranema/actions/copy_default"
 require "ranema/actions/copy_foreign_keys"
 require "ranema/actions/copy_from_old_to_new_column_trigger"
 require "ranema/actions/copy_indexes"
@@ -59,7 +59,7 @@ module Ranema
         :copy_indexes,
         :copy_foreign_keys,
         :copy_triggers,
-        :copy_default_value,
+        :copy_default,
         :copy_checks,
         :copy_null_constraint,
         :copy_indirectly_dependent_triggers,

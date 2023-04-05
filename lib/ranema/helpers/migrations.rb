@@ -45,20 +45,6 @@ module Ranema
         write_file(file, "validate_#{constraint_name}")
       end
 
-      def add_default(table_name, old_column, new_name)
-        migration_name = "add_#{new_name}_to_#{table_name}"
-
-        file = render_template(
-          "add_column",
-          migration_class_name: migration_name.camelcase,
-          table_name: table_name,
-          name: new_name,
-          old_column: old_column
-        )
-
-        write_file(file, migration_name)
-      end
-
       def add_index(old_column_index, old_column_name, new_column_name)
         migration_name = "add_index_#{old_column_index.name.gsub(/#{old_column_name}/, new_column_name)}"
 
