@@ -43,7 +43,7 @@ module Ranema
 
       # @return [Boolean] true if the action has been executed.
       def performed?
-        raise NotImplementedError
+        false
       end
     end
   end

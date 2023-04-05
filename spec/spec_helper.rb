@@ -5,6 +5,7 @@ ENV["RAILS_ENV"] = "test"
 require "rails_app/config/environment"
 
 require "bundler/setup"
+require "pry"
 require "ranema"
 
 RSpec.configure do |config|
