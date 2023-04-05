@@ -174,10 +174,13 @@ module Ranema
         File.write(MIGRATIONS_DIR.join("#{migration_number}_#{name}.rb"), content)
       end
 
-      # Sleep for 1 second to ensure a unique migration_number.
+      # Returns a unique migration_number.
+      #
+      # NOTE: running ranema in very short succession might lead to overlap in numbers.
       def migration_number
-        sleep(1)
-        Time.zone.now.strftime("%Y%m%d%H%M%S")
+        return @migration_number + 1 if @migration_number
+
+        @migration_number = Time.zone.now.strftime("%Y%m%d%H%M%S").to_i - 1
       end
     end
   end
