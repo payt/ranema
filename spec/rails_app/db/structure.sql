@@ -6,6 +6,8 @@ CREATE TABLE public.users (
 CREATE TABLE public.defaults (
     old_boolean boolean DEFAULT false,
     new_boolean boolean,
+    old_string character varying DEFAULT 'unknown',
+    new_string character varying,
     old_timestamp timestamp with time zone DEFAULT transaction_timestamp(),
     new_timestamp timestamp with time zone
 );
