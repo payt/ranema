@@ -144,6 +144,10 @@ module Ranema
         write_file(file, migration_name)
       end
 
+      def migration_exists?(name)
+        Dir[MIGRATIONS_DIR.join("*_#{name}.rb")].any?
+      end
+
       def column_exists?(*args)
         ActiveRecord::Migration.column_exists?(*args)
       end
@@ -166,10 +170,17 @@ module Ranema
         File.write(MIGRATIONS_DIR.join("#{migration_number}_#{migration_name}.rb"), file)
       end
 
-      # Sleep for 1 second to ensure a unique migration_number.
+      def create_migration(name:, content:)
+        File.write(MIGRATIONS_DIR.join("#{migration_number}_#{name}.rb"), content)
+      end
+
+      # Returns a unique migration_number.
+      #
+      # NOTE: running ranema in very short succession might lead to overlap in numbers.
       def migration_number
-        sleep(1)
-        Time.zone.now.strftime("%Y%m%d%H%M%S")
+        return @migration_number + 1 if @migration_number
+
+        @migration_number = Time.zone.now.strftime("%Y%m%d%H%M%S").to_i - 1
       end
     end
   end

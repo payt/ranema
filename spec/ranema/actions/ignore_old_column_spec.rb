@@ -39,4 +39,3 @@ RSpec.describe Ranema::Actions::IgnoreOldColumn do
     end
   end
 end
-

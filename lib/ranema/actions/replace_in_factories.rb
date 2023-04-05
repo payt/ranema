@@ -68,16 +68,16 @@ module Ranema
           .public_methods
           .grep(/(\A|_)#{old_column_name}(_|\?|!|=|\z)/)
           .reject { |name| method_names_to_skip_regexp != // && name.match?(method_names_to_skip_regexp) }
-          .select { |name|
+          .select do |name|
             model_instance.method(name).source_location&.first&.include?("/active_(model|record)/attribute_methods")
-          }
+          end
           .push(old_column_name)
       end
 
       # @return [Regexp]
       def method_names_to_skip_regexp
         @method_names_to_skip_regexp ||=
-          Regexp.new((Invoice.column_names.grep(/#{old_column_name}/) - [old_column_name]).join("|"))
+          Regexp.union((Invoice.column_names.grep(/#{old_column_name}/) - [old_column_name]))
       end
     end
   end

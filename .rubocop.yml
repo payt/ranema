@@ -17,8 +17,12 @@ Style/WordArray:
 
 Metrics/BlockLength:
   Exclude:
-  - spec/**/*_spec.rb
+    - spec/**/*_spec.rb
 
 Layout/MultilineMethodCallIndentation:
   Exclude:
-  - spec/**/*_spec.rb
+    - spec/**/*_spec.rb
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - spec/**/*_spec.rb
