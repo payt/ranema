@@ -4,49 +4,46 @@ require "ranema/helpers/migrations"
 
 module Ranema
   module Actions
+    # Adds a trigger that causes any changes made to the old_column are also made to the new_column.
     class CopyFromOldToNewColumnTrigger < Base
       include Helpers::Migrations
 
       def message
-        "Added triggers to keep `#{old_column_name}` and `#{new_column_name}` in sync."
+        "Added trigger to copy values from `#{old_column_name}` to `#{new_column_name}`."
       end
 
       def trigger_name
         "#{rename_key}_sync_new_column"
       end
 
+      def migration_name
+        trigger_name
+      end
+
       private
 
       def perform
-        add_trigger(table_name, trigger, trigger_name)
+        create_migration(name: migration_name, content: migration_template)
       end
 
       def performed?
+        migration_exists?(migration_name) || trigger_exists?(trigger_name)
+      end
+
+      def trigger_exists?(name)
         exec_query(
-          "SELECT exists(SELECT * FROM pg_proc WHERE proname = $1)",
+          "SELECT exists(SELECT * FROM pg_trigger WHERE tgname = $1)",
           "SQL",
-          [[nil, trigger_name]]
+          [[nil, name]]
         ).to_a.first["exists"]
       end
 
-      def trigger
-        <<~SQL
-          CREATE OR REPLACE FUNCTION #{trigger_name}() RETURNS trigger
-          LANGUAGE plpgsql VOLATILE
-          AS $$
-          BEGIN
-            NEW.#{new_column_name} := NEW.#{old_column_name};
-            RETURN NEW;
-          END;
-          $$;
-
-          CREATE TRIGGER #{trigger_name}
-          BEFORE INSERT OR UPDATE OF #{old_column_name}
-          ON #{table_name}
-          FOR EACH ROW
-          WHEN (pg_trigger_depth() = 0)
-          EXECUTE PROCEDURE #{trigger_name}();
-        SQL
+      def migration_template
+        render_template(
+          "copy_from_old_to_new_column_trigger",
+          migration_class_name: migration_name.camelcase,
+          trigger_name: trigger_name
+        )
       end
     end
   end

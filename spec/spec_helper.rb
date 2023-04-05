@@ -27,6 +27,14 @@ RSpec.configure do |config|
       .tap { |conn| conn.structure_load(Pathname(__dir__).join("rails_app/db/structure.sql").to_s, nil) }
   end
 
+  # Wraps each spec in a transaction to prevent database changes leaking into other specs.
+  config.around do |example|
+    ActiveRecord::Base.transaction do
+      example.run
+      raise ActiveRecord::Rollback
+    end
+  end
+
   # Creates a copy of the original state of the rails_app.
   config.before(:suite) do
     FileUtils.cp_r(Ranema::Utils::APP_ROOT, "tmp")
