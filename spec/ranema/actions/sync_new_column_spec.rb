@@ -2,9 +2,9 @@
 
 require "spec_helper"
 require "ranema/actions/base"
-require "ranema/actions/copy_from_old_to_new_column_trigger"
+require "ranema/actions/sync_new_column"
 
-RSpec.describe Ranema::Actions::CopyFromOldToNewColumnTrigger do
+RSpec.describe Ranema::Actions::SyncNewColumn do
   subject(:call) { described_class.call(table_name, old_column_name, new_column_name) }
 
   let(:table_name) { "copy_values" }
@@ -16,7 +16,7 @@ RSpec.describe Ranema::Actions::CopyFromOldToNewColumnTrigger do
   end
 
   context "when the migration was already added" do
-    before { call }
+    before { described_class.call(table_name, old_column_name, new_column_name) }
 
     it "does not add another migration" do
       expect { call }.not_to change { Ranema::Utils::MIGRATIONS_DIR.children.size }
@@ -30,7 +30,7 @@ RSpec.describe Ranema::Actions::CopyFromOldToNewColumnTrigger do
 
       it "adds the new column to the table" do
         expect { migration.migrate(:up) }
-          .to change { instance.send(:trigger_exists?, instance.trigger_name) }.to(true)
+          .to change { instance.send(:trigger_exists?, table_name, instance.trigger_name) }.to(true)
       end
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe Ranema::Actions::CopyFromOldToNewColumnTrigger do
     let(:migration) { instance.migration_name.camelcase.constantize }
 
     before do
-      call
+      described_class.call(table_name, old_column_name, new_column_name)
       require(Ranema::Utils::MIGRATIONS_DIR.children.last)
       migration.migrate(:up)
     end
@@ -53,6 +53,14 @@ RSpec.describe Ranema::Actions::CopyFromOldToNewColumnTrigger do
     it "sets the new_column when inserting a new record" do
       expect { CopyValue.create!(old: "new_value") }
         .to change { CopyValue.select(:new).last.new }
+    end
+
+    context "when the migration file is deleted" do
+      before { FileUtils.rm(Ranema::Utils::MIGRATIONS_DIR.children.last) }
+
+      it "does not add another migration since the trigger still exists in the database" do
+        expect { call }.not_to change { Ranema::Utils::MIGRATIONS_DIR.children.size }
+      end
     end
   end
 end

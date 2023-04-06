@@ -138,6 +138,14 @@ module Ranema
         ActiveRecord::Migration.column_exists?(*args)
       end
 
+      def trigger_exists?(table_name, name)
+        exec_query(
+          "SELECT exists(SELECT * FROM pg_trigger JOIN pg_class ON pg_class.oid = pg_trigger.tgrelid WHERE pg_class.relname = $1 AND tgname = $2)",
+          "SQL",
+          [[nil, table_name], [nil, name]]
+        ).to_a.first["exists"]
+      end
+
       def exec_query(*args)
         ActiveRecord::Migration.connection.exec_query(*args)
       end

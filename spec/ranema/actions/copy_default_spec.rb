@@ -16,7 +16,7 @@ RSpec.describe Ranema::Actions::CopyDefault do
   end
 
   context "when the migration was already added" do
-    before { call }
+    before { described_class.call(table_name, old_column_name, new_column_name) }
 
     it "does not add another migration" do
       expect { call }.not_to change { Ranema::Utils::MIGRATIONS_DIR.children.size }
@@ -44,7 +44,7 @@ RSpec.describe Ranema::Actions::CopyDefault do
     end
 
     context "when the migration was already added" do
-      before { call }
+      before { described_class.call(table_name, old_column_name, new_column_name) }
 
       it "does not add another migration" do
         expect { call }.not_to change { Ranema::Utils::MIGRATIONS_DIR.children.size }
@@ -73,7 +73,7 @@ RSpec.describe Ranema::Actions::CopyDefault do
     end
 
     context "when the migration was already added" do
-      before { call }
+      before { described_class.call(table_name, old_column_name, new_column_name) }
 
       it "does not add another migration" do
         expect { call }.not_to change { Ranema::Utils::MIGRATIONS_DIR.children.size }

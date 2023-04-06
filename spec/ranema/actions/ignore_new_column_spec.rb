@@ -29,7 +29,10 @@ RSpec.describe Ranema::Actions::IgnoreNewColumn do
   end
 
   context "when the column has already been ignored" do
-    before { call }
+    before do
+      described_class.call(table_name, old_column_name, new_column_name)
+      Rails.application.reloader.reload!
+    end
 
     it "does not alter the correct state of the file" do
       expect { call }
