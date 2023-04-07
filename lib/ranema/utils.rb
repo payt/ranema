@@ -53,7 +53,12 @@ module Ranema
 
     # @return [ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
     def old_column
-      @old_column ||= model.columns.find { |column| column.name == old_column_name }
+      @old_column ||=
+        ActiveRecord::Base
+        .connection
+        .send(:column_definitions, table_name)
+        .find { |field| field[0] == old_column_name }
+        .then { |field| ActiveRecord::Base.connection.send(:new_column_from_field, table_name, field) }
     end
 
     # NOTE: when a class is in a file with a unconventional name, its location can't be determined.
@@ -75,7 +80,13 @@ module Ranema
     def render_template(name, options)
       file = TEMPLATES_DIR.join("#{name}.rb.tt")
       file = file.exist? ? file : Pathname.new("#{Ranema::ROOT_DIR}/ranema/templates/#{name}.rb.tt")
-      options = { i: indentation, q: quote }.merge(options)
+      options = {
+        i: indentation,
+        q: quote,
+        table_name: table_name,
+        old_column_name: old_column_name,
+        new_column_name: new_column_name
+      }.merge(options)
 
       ERB.new(file.binread, trim_mode: "-").result_with_hash(options)
     end
@@ -93,7 +104,7 @@ module Ranema
         .flat_map { |dir| Dir[rails_root.join(dir, "**", "*#{model_name}*")] }
         .concat(REPLACE_DIRS.flat_map { |dir| Dir[rails_root.join(dir, "**", model_name, "**", "*")] })
         .select { |entry| File.file?(entry) }
-        .reject { |file_name| file_names_to_skip.match?(file_name) }
+        .grep_v(file_names_to_skip)
     end
 
     # @return [Regexp] regexp with files where just the name of the model in the filename is a false-positive.

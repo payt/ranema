@@ -8,25 +8,10 @@ module Ranema
     module Migrations
       include Utils
 
-      def add_column(table_name, old_column, new_column_name)
-        migration_name = "add_#{new_column_name}_to_#{table_name}"
-
-        file = render_template(
-          "add_column",
-          migration_class_name: migration_name.camelcase,
-          table_name: table_name,
-          name: new_column_name,
-          old_column: old_column
-        )
-
-        write_file(file, migration_name)
-      end
-
-      def add_check(table_name, check, check_name)
+      def add_check(_table_name, check, check_name)
         file = render_template(
           "add_check_constraint",
           migration_class_name: "Add#{check_name.camelcase}",
-          table_name: table_name,
           check: check,
           check_name: check_name
         )
@@ -34,11 +19,10 @@ module Ranema
         write_file(file, "add_#{check_name}")
       end
 
-      def validate_constraint(table_name, constraint_name)
+      def validate_constraint(_table_name, constraint_name)
         file = render_template(
           "validate_constraint",
           migration_class_name: "Validate#{constraint_name.camelcase}",
-          table_name: table_name,
           constraint_name: constraint_name
         )
 
@@ -51,9 +35,7 @@ module Ranema
         file = render_template(
           "add_index",
           migration_class_name: migration_name.camelcase,
-          index: old_column_index,
-          new_column_name: new_column_name,
-          old_column_name: old_column_name
+          index: old_column_index
         )
 
         write_file(file, migration_name)
@@ -66,8 +48,6 @@ module Ranema
           "add_foreign_key",
           migration_class_name: migration_name.camelcase,
           foreign_key: old_column_foreign_key,
-          new_column_name: new_column_name,
-          old_column_name: old_column_name,
           new_foreign_key_name: new_foreign_key_name
         )
 
@@ -80,7 +60,6 @@ module Ranema
         file = render_template(
           "add_null_constraint",
           migration_class_name: migration_name.camelcase,
-          table_name: table_name,
           column_name: column_name
         )
 
@@ -95,7 +74,6 @@ module Ranema
         file = render_template(
           "add_trigger",
           migration_class_name: migration_name.camelcase,
-          table_name: table_name,
           trigger: trigger,
           trigger_name: trigger_name
         )
@@ -123,7 +101,6 @@ module Ranema
           "remove_column",
           migration_class_name: migration_name.camelcase,
           new_column: new_column,
-          old_column_name: old_column_name,
           table_name: table_name
         )
 
@@ -136,6 +113,18 @@ module Ranema
 
       def column_exists?(*args)
         ActiveRecord::Migration.column_exists?(*args)
+      end
+
+      def trigger_exists?(table_name, name)
+        exec_query(<<~SQL.squish, "SQL", [[nil, table_name], [nil, name]]).to_a.first["exists"]
+          SELECT exists(
+            SELECT *
+            FROM pg_trigger
+            JOIN pg_class ON pg_class.oid = pg_trigger.tgrelid
+            WHERE pg_class.relname = $1
+              AND pg_trigger.tgname = $2
+          )
+        SQL
       end
 
       def exec_query(*args)

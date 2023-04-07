@@ -14,8 +14,8 @@ require "ranema/actions/add_sanity_check_constraint"
 require "ranema/actions/copy_checks"
 require "ranema/actions/copy_default"
 require "ranema/actions/copy_foreign_keys"
-require "ranema/actions/copy_from_old_to_new_column_trigger"
 require "ranema/actions/copy_indexes"
+require "ranema/actions/copy_indirectly_dependent_triggers"
 require "ranema/actions/copy_null_constraint"
 require "ranema/actions/copy_triggers"
 require "ranema/actions/ignore_new_column"
@@ -30,10 +30,10 @@ require "ranema/actions/replace_in_named_files"
 require "ranema/actions/replace_in_orm_queries"
 require "ranema/actions/replace_in_queries"
 require "ranema/actions/replace_method_calls"
+require "ranema/actions/sync_new_column"
 require "ranema/actions/sync_triggers_with_raise"
 require "ranema/actions/unignore_new_column"
 require "ranema/actions/unignore_old_column"
-require "ranema/actions/copy_indirectly_dependent_triggers"
 
 module Ranema
   class NextStep
@@ -45,7 +45,7 @@ module Ranema
         :prepend_missing_table_names,
 
         # Makes sure that from now on the columns of new records are in sync.
-        :copy_from_old_to_new_column_trigger,
+        :sync_new_column,
 
         # Makes sure that all existing records are updated.
         :add_backfill_class,

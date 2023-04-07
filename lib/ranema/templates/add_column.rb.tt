@@ -4,7 +4,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
   def change
     add_column(
       :<%= table_name %>,
-      :<%= name %>,
+      :<%= new_column_name %>,
       :<%= old_column.type %>,
       <%= %i[limit precision scale].map { |prop| old_column.public_send(prop)&.then { |val| "#{prop}: #{val}" } }.compact.join(", ") %>
     )

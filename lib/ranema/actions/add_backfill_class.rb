@@ -17,9 +17,7 @@ module Ranema
         file = render_template(
           "backfill_class",
           class_name: backfill_class_name,
-          model: model,
-          old_column_name: old_column_name,
-          new_column_name: new_column_name
+          model: model
         )
 
         File.write(backfill_file_path, file)
