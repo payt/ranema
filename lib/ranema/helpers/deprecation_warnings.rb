@@ -72,9 +72,7 @@ module Ranema
         render_template(
           "aliasses",
           method_indentation: method_indentation,
-          old_column_name: old_column_name,
-          model: model,
-          new_column_name: new_column_name
+          model: model
         )
       end
 
@@ -95,9 +93,7 @@ module Ranema
       def spec_template
         render_template(
           "aliasses_spec",
-          old_column_name: old_column_name,
-          model: model,
-          new_column_name: new_column_name
+          model: model
         )
       end
     end

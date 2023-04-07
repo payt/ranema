@@ -33,8 +33,6 @@ module Ranema
         render_template(
           "add_column",
           migration_class_name: migration_name.camelcase,
-          table_name: table_name,
-          name: new_column_name,
           old_column: old_column
         )
       end

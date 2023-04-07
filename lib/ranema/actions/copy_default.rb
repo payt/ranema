@@ -31,10 +31,7 @@ module Ranema
         render_template(
           "add_default",
           migration_class_name: migration_name.camelcase,
-          table_name: table_name,
-          old_column: old_column,
-          old_column_name: old_column_name,
-          new_column_name: new_column_name
+          old_column: old_column
         )
       end
 
