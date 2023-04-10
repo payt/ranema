@@ -2,33 +2,37 @@
 
 module Ranema
   module Actions
+    # Adds a class to the repo that will backfill the new column with values from the old column.
+    # This class is intented to be called from a migration.
     class AddBackfillClass < Base
       def message
         "Added class to backfill the new column."
       end
 
-      def backfill_file_path
-        RENAMES_DIR.join("#{backfill_class_name.snakecase}.rb")
+      def path
+        RENAMES_DIR.join("#{class_name.underscore}.rb")
+      end
+
+      def class_name
+        "#{rename_key}_backfill".camelcase
       end
 
       private
 
       def perform
-        file = render_template(
-          "backfill_class",
-          class_name: backfill_class_name,
+        File.write(path, template)
+      end
+
+      def template
+        render_template(
+          "add_backfill_class",
+          class_name: class_name,
           model: model
         )
-
-        File.write(backfill_file_path, file)
       end
 
       def performed?
-        !backfill_class_name.safe_constantize.nil?
-      end
-
-      def backfill_class_name
-        "#{table_name}_#{new_column_name}_backfill".camelcase
+        path.exist?
       end
     end
   end
