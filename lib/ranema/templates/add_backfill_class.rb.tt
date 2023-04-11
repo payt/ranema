@@ -2,7 +2,7 @@
 
 class <%= class_name %>
   DURATIONS_SIZE = 12
-  # With a sleep factor of 3, the process will spend 3 times more on sleeping than on querys.
+  # With a sleep factor of 3, the process will spend 3 times more on sleeping than on queries.
   SLEEP_FACTOR = 3
 
   class << self
