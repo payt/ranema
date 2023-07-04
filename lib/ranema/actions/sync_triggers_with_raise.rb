@@ -28,8 +28,8 @@ module Ranema
         add_trigger(table_name, update_new_column_trigger, update_new_column_trigger_name)
         add_trigger(table_name, insert_trigger, insert_trigger_name)
 
-        current_trigger = CopyFromOldToNewColumnTrigger.new(table_name, old_column_name, new_column_name)
-        remove_trigger(current_trigger.trigger_name, current_trigger.send(:trigger))
+        current_trigger = SyncNewColumn.new(table_name, old_column_name, new_column_name)
+        remove_trigger(current_trigger.trigger_name, "")
       end
 
       def performed?

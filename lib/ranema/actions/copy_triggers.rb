@@ -39,7 +39,7 @@ module Ranema
           query,
           "SQL",
           [[nil, table_name],
-           [nil, CopyFromOldToNewColumnTrigger.new(table_name, old_column_name, new_column_name).trigger_name]]
+           [nil, SyncNewColumn.new(table_name, old_column_name, new_column_name).trigger_name]]
         ).to_a
       end
 
