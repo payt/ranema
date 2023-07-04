@@ -2,6 +2,7 @@
 
 require "active_record/migration"
 require "ranema/utils"
+require 'singleton'
 
 module Ranema
   module Helpers
@@ -153,9 +154,19 @@ module Ranema
       #
       # NOTE: running ranema in very short succession might lead to overlap in numbers.
       def migration_number
-        return (@migration_number += 1) if defined? @migration_number
+        MigrationNumber.instance.value
+      end
 
-        @migration_number = Time.zone.now.strftime("%Y%m%d%H%M%S").to_i - 1
+      class MigrationNumber
+        include Singleton
+
+        def initialize
+          @migration_number = Time.zone.now.strftime("%Y%m%d%H%M%S").to_i - 1
+        end
+
+        def value
+          @migration_number += 1
+        end
       end
     end
   end
