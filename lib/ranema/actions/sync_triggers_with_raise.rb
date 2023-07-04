@@ -41,7 +41,7 @@ module Ranema
       end
 
       def update_old_column_trigger_name
-        "#{rename_key}_update_old_column"
+        "#{rename_key}_update_old_column_with_raise"
       end
 
       def update_old_column_trigger
@@ -70,7 +70,7 @@ module Ranema
       end
 
       def update_new_column_trigger_name
-        "#{rename_key}_update_new_column"
+        "#{rename_key}_update_new_column_with_raise"
       end
 
       def update_new_column_trigger
