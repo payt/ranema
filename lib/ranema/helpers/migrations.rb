@@ -153,7 +153,7 @@ module Ranema
       #
       # NOTE: running ranema in very short succession might lead to overlap in numbers.
       def migration_number
-        return @migration_number + 1 if @migration_number
+        return (@migration_number += 1) if defined? @migration_number
 
         @migration_number = Time.zone.now.strftime("%Y%m%d%H%M%S").to_i - 1
       end
