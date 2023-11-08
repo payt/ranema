@@ -18,7 +18,7 @@ module Ranema
       end
 
       def backfill_file_path
-        AddBackfillClass.new(table_name, old_column_name, new_column_name).backfill_file_path
+        AddBackfillClass.new(table_name, old_column_name, new_column_name).path
       end
     end
   end
