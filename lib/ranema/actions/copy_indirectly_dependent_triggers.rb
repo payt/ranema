@@ -8,8 +8,7 @@ module Ranema
 
       private
 
-      def perform
-      end
+      def perform; end
 
       def performed?
         false

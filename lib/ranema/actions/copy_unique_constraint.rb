@@ -11,6 +11,8 @@ module Ranema
         "TODO: Check if a UNIQUE CONSTRAINT needs to be for added for `#{new_column_name}`."
       end
 
+      def perform; end
+
       private
 
       def performed?
