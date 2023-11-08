@@ -43,11 +43,7 @@ module Ranema
 
       # @return [Array<Hash>]
       def checks
-        @checks ||= exec_query(
-          query,
-          "SQL",
-          [[nil, table_name], [nil, sync_check_name]]
-        ).to_a
+        @checks ||= exec_query(query, "SQL", [table_name, sync_check_name]).to_a
       end
 
       def query

@@ -33,11 +33,9 @@ module Ranema
       end
 
       def performed?
-        exec_query(
-          "SELECT exists(SELECT * FROM pg_proc WHERE proname IN($1))",
-          "SQL",
-          [[nil, trigger_names.join(", ")]]
-        ).to_a.first["exists"]
+        exec_query("SELECT exists(SELECT * FROM pg_proc WHERE proname IN($1))", "SQL", [trigger_names.join(", ")])
+          .to_a
+          .first["exists"]
       end
 
       def update_old_column_trigger_name

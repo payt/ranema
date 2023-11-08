@@ -20,11 +20,9 @@ module Ranema
       end
 
       def performed?
-        exec_query(
-          "SELECT exists(SELECT * FROM pg_proc WHERE proname = $1)",
-          "SQL",
-          [[nil, trigger_name]]
-        ).to_a.first["exists"]
+        exec_query("SELECT exists(SELECT * FROM pg_proc WHERE proname = $1)", "SQL", [trigger_name])
+          .to_a
+          .first["exists"]
       end
 
       def trigger

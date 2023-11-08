@@ -35,12 +35,14 @@ module Ranema
 
       # @return [Array<Hash>]
       def triggers
-        @triggers ||= exec_query(
-          query,
-          "SQL",
-          [[nil, table_name],
-           [nil, SyncNewColumn.new(table_name, old_column_name, new_column_name).trigger_name]]
-        ).to_a
+        @triggers ||= exec_query(query, "SQL", binds).to_a
+      end
+
+      def binds
+        [
+          table_name,
+          SyncNewColumn.new(table_name, old_column_name, new_column_name).trigger_name
+        ]
       end
 
       def query

@@ -117,7 +117,7 @@ module Ranema
       end
 
       def trigger_exists?(table_name, name)
-        exec_query(<<~SQL.squish, "SQL", [[nil, table_name], [nil, name]]).to_a.first["exists"]
+        query = <<~SQL.squish
           SELECT exists(
             SELECT *
             FROM pg_trigger
@@ -126,6 +126,7 @@ module Ranema
               AND pg_trigger.tgname = $2
           )
         SQL
+        exec_query(query, "SQL", [name, table_name]).to_a.first["exists"]
       end
 
       def exec_query(*args)

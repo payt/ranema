@@ -22,11 +22,7 @@ module Ranema
       end
 
       def new_column_null
-        exec_query(
-          query,
-          "SQL",
-          [[nil, table_name], [nil, new_column_name]]
-        ).to_a.first["is_nullable"] == "YES"
+        exec_query(query, "SQL", [table_name, new_column_name]).to_a.first["is_nullable"] == "YES"
       end
 
       def query

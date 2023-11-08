@@ -36,7 +36,7 @@ module Ranema
       end
 
       def new_column_default
-        exec_query(<<~SQL, "SQL", [[nil, table_name], [nil, new_column_name]]).rows.first.first
+        exec_query(<<~SQL, "SQL", [table_name, new_column_name]).rows.first.first
           SELECT "columns".column_default
           FROM "information_schema"."columns" columns
           WHERE columns."table_name" = $1
