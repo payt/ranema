@@ -43,7 +43,7 @@ module Ranema
       end
 
       def tables
-        ActiveRecord::Base.connection.exec_query(<<~SQL, "SQL", [[nil, new_column_name]]).to_a
+        ActiveRecord::Base.connection.exec_query(<<~SQL, "SQL", [new_column_name]).to_a
           SELECT
             "information_schema"."table_name"
           FROM

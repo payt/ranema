@@ -23,11 +23,7 @@ module Ranema
       end
 
       def performed?
-        exec_query(
-          query,
-          "SQL",
-          [[nil, check_name]]
-        ).to_a.first.present?
+        exec_query(query,"SQL", [check_name]).to_a.first.present?
       end
 
       def query
