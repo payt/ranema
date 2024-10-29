@@ -93,8 +93,8 @@ module Ranema
 
     attr_reader :table_name, :old_column_name, :new_column_name, :start_step
 
-    def self.call(*args)
-      new(*args).call
+    def self.call(*args, **kwargs)
+      new(*args, **kwargs).call
     end
 
     # @param table_name [String, Symbol]
