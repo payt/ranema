@@ -33,7 +33,7 @@ module Ranema
 
       # @return [Array] lists of item on the todo list.
       def list
-        @list ||= file.exist? ? YAML.load_file(file) : []
+        @list ||= file.exist? ? (YAML.load_file(file) || []) : []
       end
 
       private
