@@ -7,7 +7,7 @@ desc "Creates a draft PR to rename the column of a table."
 task :ranema, [:table_name, :old_column_name, :new_column_name, :start_step] => :environment do |task, args|
   require "ranema/next_step"
 
-  Ranema::NextStep.call(args.to_h)
+  Ranema::NextStep.call(**args.to_h)
 
   next if `git status | grep db/migrate`.blank?
 

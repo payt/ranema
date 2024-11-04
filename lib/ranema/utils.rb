@@ -58,7 +58,7 @@ module Ranema
         .connection
         .send(:column_definitions, table_name)
         .find { |field| field[0] == old_column_name }
-        .then { |field| ActiveRecord::Base.connection.send(:new_column_from_field, table_name, field) }
+        .then { |field| ActiveRecord::Base.connection.send(:new_column_from_field, table_name, field, nil) }
     end
 
     # NOTE: when a class is in a file with a unconventional name, its location can't be determined.
